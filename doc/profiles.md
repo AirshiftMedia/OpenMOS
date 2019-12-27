@@ -1,10 +1,10 @@
 # MOS 4.0 Profiles
 
 - Profile 0 - Basic Communication
--- keepAlive
--- heartBeat
--- reqMachInfo
--- listMachInfo
+ - keepAlive
+ - heartBeat
+ - reqMachInfo
+ - listMachInfo
 - Profile 1 - Basic Object Based Workflow
 - Profile 2 - Basic Running Order / Content List Workflow
 - Profile 3 - Advanced Object Based Workflow
