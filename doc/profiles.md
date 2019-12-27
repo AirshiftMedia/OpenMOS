@@ -1,7 +1,8 @@
 # MOS 4.0 Profiles
 
 * Profile 0 - Basic Communication
- ** `keepAlive`
+
+ `keepAlive`
  `heartBeat`
  `reqMachInfo`
  `listMachInfo`
