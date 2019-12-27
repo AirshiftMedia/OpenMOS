@@ -3,7 +3,11 @@ Protected Class mainServerSocket
 Inherits ServerSocket
 	#tag Event
 		Function AddSocket() As TCPSocket
+		  Dim ret As TCPSocket = New ClientSocket(mCurrentSocket)
 		  
+		  mCurrentSocket = mCurrentSocket + 1
+		  
+		  Return ret
 		End Function
 	#tag EndEvent
 
@@ -12,6 +16,11 @@ Inherits ServerSocket
 		  
 		End Sub
 	#tag EndEvent
+
+
+	#tag Property, Flags = &h0
+		mCurrentSocket As Integer
+	#tag EndProperty
 
 
 	#tag ViewBehavior

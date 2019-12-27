@@ -14,10 +14,10 @@ Inherits ConsoleApplication
 		  // mosID - ID of MOS server instance
 		  
 		  if ubound(args)>0 then
-		    print "Starting new server instance with MOS ID "+args(1)
+		    print "Starting new server instance with mosID "+args(1)
 		    mosID = args(1)
 		  else
-		    print "Cannot operate without MOS ID, shutting down."
+		    print "Cannot operate without mosID, shutting down."
 		    Return mMyApplication.Finalize
 		  end
 		  
@@ -33,6 +33,23 @@ Inherits ConsoleApplication
 		  Return mMyApplication.Finalize
 		End Function
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function SendToAll(msg as string) As boolean
+		  
+		  
+		  return true
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SendToNCS(msg as string, ncsid as integer) As boolean
+		  
+		  
+		  return true
+		End Function
+	#tag EndMethod
 
 
 	#tag Property, Flags = &h0

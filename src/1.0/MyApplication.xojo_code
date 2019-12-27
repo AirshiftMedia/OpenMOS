@@ -10,6 +10,7 @@ Protected Class MyApplication
 
 	#tag Method, Flags = &h0
 		Function getProcessStatus() As string
+		  dim s as string
 		  
 		  if TargetMacOS then
 		    s = "Memory " +format(SystemInformationMBS.AvailableRAM/1024/1024,"0")+" MB of RAM free."

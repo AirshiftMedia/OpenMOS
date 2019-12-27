@@ -21,9 +21,36 @@ Inherits SSLSocket
 
 	#tag Event
 		Sub SendComplete(UserAborted As Boolean)
+		  #Pragma Unused userAborted
+		  
 		  
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub AddMessage(msg as string)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(num as Integer)
+		  // Calling the overridden superclass constructor.
+		  // Note that this may need modifications if there are multiple constructor choices.
+		  // Possible constructor calls:
+		  // Constructor() -- From TCPSocket
+		  // Constructor() -- From SocketCore
+		  Super.Constructor
+		  
+		  mNum = num
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		mNum As Integer
+	#tag EndProperty
 
 
 	#tag ViewBehavior
