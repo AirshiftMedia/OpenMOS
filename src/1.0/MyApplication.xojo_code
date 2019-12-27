@@ -10,15 +10,15 @@ Protected Class MyApplication
 
 	#tag Method, Flags = &h0
 		Function getProcessStatus() As string
-		  // TODO ProcessMBS only supports Win and macOS
 		  
-		  dim s as string
-		  dim mProcess as ProcessMBS
-		  mProcess = New ProcessMBS
+		  if TargetMacOS then
+		    s = "Memory " +format(SystemInformationMBS.AvailableRAM/1024/1024,"0")+" MB of RAM free."
+		  elseif TargetWindows then
+		    s = "Memory " +format(SystemInformationMBS.AvailableRAM/1024/1024,"0")+" MB of RAM free."
+		  elseif TargetLinux then
+		    s = "Memory " +format(SystemInformationMBS.AvailableRAM/1024/1024,"0")+" MB of RAM free."
+		  end
 		  
-		  mProcess.GetCurrentProcess
-		  
-		  s = "Memory: " 
 		  
 		  return s
 		End Function

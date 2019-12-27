@@ -47,6 +47,10 @@ Inherits ConsoleApplication
 		mosID As Variant
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		mUTCTimeFormat As Boolean
+	#tag EndProperty
+
 
 	#tag ViewBehavior
 	#tag EndViewBehavior

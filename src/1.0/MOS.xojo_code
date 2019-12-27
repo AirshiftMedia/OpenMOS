@@ -35,6 +35,24 @@ Protected Module MOS
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function mosTime() As string
+		  dim d as Xojo.Core.Date = Xojo.Core.Date.now
+		  dim s as string
+		  
+		  // Timestamp format according to MOS Protocol 4.0:
+		  // 2009-04-11T14:22:07,125-02:00 or
+		  // 2009-04-11T14:22:07,125Z when in UTC time
+		  
+		  if app.mUTCTimeFormat then
+		    s = s + "125Z"
+		  else
+		    s = s + "125-02:00"
+		  end
+		  
+		End Function
+	#tag EndMethod
+
 
 End Module
 #tag EndModule
