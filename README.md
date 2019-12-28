@@ -5,7 +5,7 @@ The project will aim at compliance with Profile 7.
 Implementation status:
 * [ ] Profile 0
 * [ ] Profile 1
-* [ ] Profile 2
+* [ ]  Profile 2
 * [ ] Profile 3
 * [ ] Profile 4
 * [ ] Profile 5
