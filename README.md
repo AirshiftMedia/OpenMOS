@@ -12,6 +12,8 @@ Implementation status:
 * [ ]  Profile 6
 * [ ]  Profile 7
 
-For more information about the MOS protocol, see https://www.mosprotocol.com
+As an experimental feature, the Profile 5 roCtrl will be implemented in a way that it can support IoT device
+control using MQTT protocol. An example use case is the red light control.
 
+For more information about the MOS protocol, see https://www.mosprotocol.com
 This project is not affiliated with MOS Group.
