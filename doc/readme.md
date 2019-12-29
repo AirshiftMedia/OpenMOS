@@ -1,3 +1,5 @@
+# About OpenMOS
+
 This section contains the documentation of the OpenMOS project.
 
 # Table of Contents:
