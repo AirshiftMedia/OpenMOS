@@ -6,4 +6,4 @@ This section contains the documentation of the OpenMOS project.
 
 - [Profiles according to the MOS protocol standard](./profiles.md)
 
-- [Release Notes] (./releasenotes.md)
+- [Release Notes](./releasenotes.md)
