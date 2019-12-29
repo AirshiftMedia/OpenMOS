@@ -1,4 +1,4 @@
-# Open MOS Server
+# Open Media Object Server
 An implementation of Media Object Server using MOS Protocol 4.0. Support for legacy 2.8.2 might be added later.
 The project will aim at compliance with Profile 7.
 
