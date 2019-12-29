@@ -17,3 +17,5 @@ control using MQTT protocol. An example use case is the red light control.
 
 For more information about the MOS protocol, see https://www.mosprotocol.com
 This project is not affiliated with MOS Group.
+
+The project maintains native binaries for Windows, macOS and Linux. Dependencies are to be kept as minimal as possible.
