@@ -1,6 +1,6 @@
 This section contains the documentation of the OpenMOS project.
 
-Table of Contents:
+# Table of Contents:
 
 - [Development tasks](./devtasks.md)
 
