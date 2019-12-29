@@ -15,3 +15,7 @@
 - Profile 7 - MOS RO/Content List Modification
 
 For more information on implementation notes and requirements, see http://mosprotocol.com/wp-content/MOS-Protocol-Documents/MOSProtocolVersion40/index.html 
+
+<hr />
+
+[BACK](./readme.md)
