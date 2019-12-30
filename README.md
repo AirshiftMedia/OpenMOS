@@ -20,3 +20,8 @@ For more information about the MOS protocol, see https://www.mosprotocol.com
 This project is not affiliated with MOS Group.
 
 When the maturity level reaches early beta, the project shall make available native binaries for Windows, macOS and Linux. Dependencies are to be kept as minimal as possible.
+
+## Repository Folder Structure
+- /bin contains the built application binaries
+- /doc contains the technical documentation
+- /src contains the source code files in xojo_project -format
