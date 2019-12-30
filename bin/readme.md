@@ -1,5 +1,7 @@
 # System Requirements
 
+OpenMOS runs as a console application with minimal dependencies. No specific frameworks, runtimes or application servers are required.
+
 ## Windows
 - Windows 7 or newer
 - Visual C++ Redistributable
@@ -18,3 +20,7 @@
 Libraries required: glib 2.0, glibc-2.14, libstdc++.so.6.0.13, libunwind8
 
 All builds made as 64-bit app only.
+
+## Network
+- Ports: 443
+(Ports 10540, 10541 and 10542 used in older MOS protocol versions are now deprecated due to web service approach)
