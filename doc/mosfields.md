@@ -72,213 +72,53 @@
 | objMetadataPath | This is an unambiguous path to the xml file – MOS Object.  This field length is 255 chars max, but is is suggested that the length be kept to a minimum number of characters.  These path formats are acceptable: UNC (eg: \\machine\directory\file.extension), URL (eg: http://machine/directory/file.extension) and FTP (eg: ftp://machine/directory/file.extension) |
 | objRev | Object Revision Number: 999 max. |
 | objSlug | Object Slug: Textual object description. 128 chars max. |
+| objTB | Object Time Base: Describes the sampling rate of the object in samples per second. This tag should be populated with a value greater than 0. For PAL Video this would be 50. For NTSC it would be 59.94. For audio it would reflect the audio sampling rate. Object Time Base is used by the NCS to derive duration and other timing information. 0XFFFFFFFF MAX |
+| objType | Object Type: Choices are "STILL", "AUDIO", "VIDEO". |
+| opTime | Operational Time: date and time of last machine start. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC. |
+| p | Paragraph:  Standard html delimitation for a new paragraph. |
+| pause | Item Delay: Requested delay between items in ms 0XFFFFFFFF MAX. |
+| pi | Presenter instructions:  Instructions to the anchor or presenter that are not to be read such as "Turn to 2-shot." |
+| pkg | Package:  Specifies that text is verbatim package copy as opposed to copy to be read by presenter. |
+| product | Used in MOS ActiveX messages. String indicating the product name of the NCS Host. 128 chars max. |
+| queryID | Unique identifier used in mosReqObjList and mosObjList to allow the MOS to do cached searching. 128 chars max. |
+| Read1stMEMasBody | Allows the first MEM block to substitute the story body. |
+| ro | The ro tag is used within the roListAll message.  ro designates each individual running order within the roListAll message. |
+| roAir | Air Ready Flag: "READY" or "NOT READY". |
+| roChannel | Running Order Channel: default channel requested by the NCS for MOS to playback a running order. 128 chars max. |
+| roCtrlCmd | Running Order Control Command:  READY, EXECUTE, PAUSE and STOP, as well as general indicator, SIGNAL, can be addressed at each level.  In other words, a single command can begin EXECUTION of an entire Running Order, of a Story containing multiple Items, or of a single Item. |
+| roCtrlTime | Running Order Control Time:  roCtrlTime is an optional field which provides a mechanism to time stamp the time of message transmission, or optionally, to provide a time in the immediate future at which the MOS should execute the command.   Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC. |
+| roEdDur | Running Order Editorial Duration: duration of entire running order. Format in hh:mm:ss, e.g. 00:58:25. |
+| roEdStart | Running Order Editorial Start: date and time requested by NCS for MOS to start playback of a running order. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC. |
+| roEventTime | Running Order Event Time: Time of the time cue sent to the parent MOS by the NCS for a specific item event. |
+| roEventType | Running Order Event Type: The type of event that is being queued in the Running order. |
+| roID | Running Order UID: Unique Identifier defined by NCS. 128 chars max. |
+| roSlug | Running Order Slug: Textual Running Order description. 128 chars max. |
+| roStatus | Running Order Status: Options are: "OK" or error description. 128 chars max. |
+| roTrigger | Running Order Air Trigger: "MANUAL", "TIMED" or "CHAINED". |
+| CHAINED (sign +/-) (value in # of samples) | CHAINED -10 would start the specified clip 10 samples before the proceeding clip ended. CHAINED 10 would start the specified clip 10 samples after the preceding clip ended, thus making a pause of 10 samples between the clips. There is a space character between the word CHAINED and the value.slug  Textual Object ID: This is the text slug of the object and is stored in the native language. This can be stored in a language other than English. 128 chars max. |
+| runContext | Used in MOS ActiveX messages. Specifies the context in which the NCS Host is instantiating the ActiveX Plug-In: BROWSE, EDIT, CREATE. |
+| searchField | searchField contains attributes that are originally derived from the schema returned in the initial mosListSearchableSchema message. |
+| searchGroup | searchGroup contains specific queries based on the values of selected mosExternalMetadata fields. |
+| SN | Serial Number: text serial number. 128 chars max. |
+| startx | Used in MOS ActiveX messages. The minimum width in pixels that the NCS Host allows for an ActiveX Plug-In in a particular metric in ncsAppInfo. 0XFFFFFFFF max. |
+| starty | Used in MOS ActiveX messages. The minimum height in pixels that the NCS Host allows for an ActiveX Plug-In in a particular metric in ncsAppInfo. 0XFFFFFFFF max. |
+| status | Status: Options are "NEW" "UPDATED" "MOVED" "BUSY " "DELETED", "NCS CTRL", "MANUAL CTRL", "READY", "NOT READY", "PLAY," "STOP". |
+| statusDescription | Status Description: textual description of status. 128 chars max. |
+| story | Story: Container for story information in a Running Order message. |
+| storyBody | Story Body: The actual text of the story within a running order. |
+| storyID | Story UID: Defined by the NCS. 128 chars max. |
+| storyItem | Story Item: An item imbedded into a story that can be triggered when that point in the story is reached in the teleprompter. |
+| storyNum | Story Number:  The name or number of the Story as used in the NCS.  This is an optional field originally intended for use by prompters. 128 chars max. |
+| storyPresenter | Story Presenter:  The anchor or presenter of a story within an running order. |
+| storyPresenterRR | Story Presenter Read Rate:  The read rate of the anchor or presenter of a story within a running order. |
+| storySlug | Story Slug: Textual Story description. 128 chars max. |
+| supportedProfiles | This field is intened to determine the device type of the device's supported MOS Profiles. |
+| swRev | Software Revision: (MOS) Text description. 128 chars max. |
+| tab | Tab: tabulation markup within description and p. |
+| techDescription | techDescription is an attribute of objPath and objProxyPath.  This attribute provides a brief and very general technical description fo the codec or file format (NOTE: the codec name should come first, followed by additional optional descriptions). |
+| time | Time: Time object changed status. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC. |
+| u | Underline: Specifies that text between tags is to be underlined. |
+| userName | An attribute in the mosReqObjList family of messages and the roReqStoryAction messages which identifies a username |
+| version | Used in MOS ActiveX messages. String indicating the version of the NCS Host. 128 chars max. |
 |  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
 
-objTB
-
-Object Time Base: Describes the sampling rate of the object in samples per second. This tag should be populated with a value greater than 0. For PAL Video this would be 50. For NTSC it would be 59.94. For audio it would reflect the audio sampling rate. Object Time Base is used by the NCS to derive duration and other timing information. 0XFFFFFFFF MAX
-
-objType
-
-Object Type: Choices are "STILL", "AUDIO", "VIDEO".
-
-opTime
-
-Operational Time: date and time of last machine start. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC.
-
-p
-
-Paragraph:  Standard html delimitation for a new paragraph.
-
-pause
-
-Item Delay: Requested delay between items in ms 0XFFFFFFFF MAX.
-
-pi
-
-Presenter instructions:  Instructions to the anchor or presenter that are not to be read such as "Turn to 2-shot."
-
-pkg
-
-            Package:  Specifies that text is verbatim package copy as opposed to copy to be read by presenter.
-
-product
-
-Used in MOS ActiveX messages. String indicating the product name of the NCS Host. 128 chars max.
-
-queryID
-
-Unique identifier used in mosReqObjList and mosObjList to allow the MOS to do cached searching. 128 chars max.
-
-Read1stMEMasBody
-
-Allows the first MEM block to substitute the story body.
-
-ro
-
-The ro tag is used within the roListAll message.  ro designates each individual running order within the roListAll message.
-
-roAir
-
-Air Ready Flag: "READY" or "NOT READY".
-
-roChannel
-
-Running Order Channel: default channel requested by the NCS for MOS to playback a running order. 128 chars max.
-
-roCtrlCmd
-
-Running Order Control Command:  READY, EXECUTE, PAUSE and STOP, as well as general indicator, SIGNAL, can be addressed at each level.  In other words, a single command can begin EXECUTION of an entire Running Order, of a Story containing multiple Items, or of a single Item.
-
-roCtrlTime
-
-Running Order Control Time:  roCtrlTime is an optional field which provides a mechanism to time stamp the time of message transmission, or optionally, to provide a time in the immediate future at which the MOS should execute the command.   Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC.
-
-roEdDur
-
-Running Order Editorial Duration: duration of entire running order. Format in hh:mm:ss, e.g. 00:58:25.
-
-roEdStart       
-
-Running Order Editorial Start: date and time requested by NCS for MOS to start playback of a running order. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC.
-
-roEventTime
-
-Running Order Event Time: Time of the time cue sent to the parent MOS by the NCS for a specific item event.
-
-roEventType
-
-Running Order Event Type: The type of event that is being queued in the Running order.
-
-roID
-
-Running Order UID: Unique Identifier defined by NCS. 128 chars max.
-
-roSlug
-
-Running Order Slug: Textual Running Order description. 128 chars max.
-
-roStatus
-
-Running Order Status: Options are: "OK" or error description. 128 chars max.
-
-roTrigger
-
-Running Order Air Trigger: "MANUAL", "TIMED" or "CHAINED".
-
-CHAINED (sign +/-) (value in # of samples)
-
-CHAINED -10 would start the specified clip 10 samples before the proceeding clip ended. CHAINED 10 would start the specified clip 10 samples after the preceding clip ended, thus making a pause of 10 samples between the clips. There is a space character between the word CHAINED and the value.slug  Textual Object ID: This is the text slug of the object and is stored in the native language. This can be stored in a language other than English. 128 chars max.
-
-runContext
-
-Used in MOS ActiveX messages. Specifies the context in which the NCS Host is instantiating the ActiveX Plug-In: BROWSE, EDIT, CREATE.
-
-searchField
-
-searchField contains attributes that are originally derived from the schema returned in the initial mosListSearchableSchema message.  
-
-searchGroup
-
-searchGroup contains specific queries based on the values of selected mosExternalMetadata fields.
-
-SN
-
-Serial Number: text serial number. 128 chars max.
-
-startx
-
-Used in MOS ActiveX messages. The minimum width in pixels that the NCS Host allows for an ActiveX Plug-In in a particular metric in ncsAppInfo. 0XFFFFFFFF max.
-
-starty
-
-Used in MOS ActiveX messages. The minimum height in pixels that the NCS Host allows for an ActiveX Plug-In in a particular metric in ncsAppInfo. 0XFFFFFFFF max.
-
- status
-
-Status: Options are "NEW" "UPDATED" "MOVED" "BUSY " "DELETED", "NCS CTRL", "MANUAL CTRL", "READY", "NOT READY", "PLAY," "STOP".
-
-statusDescription
-
-Status Description: textual description of status. 128 chars max.
-
- story
-
-Story: Container for story information in a Running Order message.
-
-storyBody
-
-            Story Body: The actual text of the story within a running order.
-
-storyID
-
-Story UID: Defined by the NCS. 128 chars max.
-
-storyItem
-
-Story Item: An item imbedded into a story that can be triggered when that point in the story is reached in the teleprompter.
-
-storyNum
-
-Story Number:  The name or number of the Story as used in the NCS.  This is an optional field originally intended for use by prompters. 128 chars max.
-
-storyPresenter
-
-Story Presenter:  The anchor or presenter of a story within an running order.
-
-storyPresenterRR
-
-Story Presenter Read Rate:  The read rate of the anchor or presenter of a story within a running order.
-
-storySlug
-
-Story Slug: Textual Story description. 128 chars max.
-
-supportedProfiles
-
-This field is intened to determine the device type of the device's supported MOS Profiles.
-
-swRev
-
-Software Revision: (MOS) Text description. 128 chars max.
-
-tab
-
-Tab: tabulation markup within description and p.
-
-techDescription
-
-techDescription is an attribute of objPath and objProxyPath.  This attribute provides a brief and very general technical description fo the codec or file format (NOTE: the codec name should come first, followed by additional optional descriptions).
-
-time
-
-Time: Time object changed status. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC.
-
-u 
-
-Underline: Specifies that text between tags is to be underlined.
-
-userName  
-
-An attribute in the mosReqObjList family of messages and the roReqStoryAction messages which identifies a username
-
-version
-
-Used in MOS ActiveX messages. String indicating the version of the NCS Host. 128 chars max.
