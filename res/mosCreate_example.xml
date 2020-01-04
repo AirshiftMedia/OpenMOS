@@ -1,0 +1,115 @@
+<mos>
+
+   <mosID>activex.station.com</mosID>
+
+   <ncsID>ncs.station.com</ncsID>
+
+   <messageID>507891</messageID>
+
+   <ncsReqStoryAction  operation="NEW" leaseLock="2" username="jbob">
+
+      <roStorySend>
+
+   <roID></roID>
+
+         <storyID></storyID>
+
+         <storySlug>Show Open</storySlug>
+
+        <storyNum>C8</storyNum>
+
+         <storyBody>
+
+            <storyPresenter>Suzie</storyPresenter>
+
+            <storyPresenterRR>10</storyPresenterRR>
+
+            <p>
+
+               <pi> Smile </pi>
+
+            </p>
+
+           <p> Good Evening, I'm Suzie Humpries </p>
+
+            <storyPresenter>Chet </storyPresenter>
+
+            <storyPresenterRR>12</storyPresenterRR>
+
+            <p> - and I'm Chet Daniels, this is the 5PM news on Monday November 5th.</p>
+
+           <p>First up today - a hotel fire downtown</p>
+
+            <storyItem>
+
+               <itemID>1</itemID>
+
+               <itemSlug>Hotel Fire vo</itemSlug>
+
+               <objID>M000705</objID>
+
+              <mosID>testmos</mosID>
+
+               <itemEdStart>0</itemEdStart>
+
+               <itemEdDur>800</itemEdDur>
+
+               <itemUserTimingDur>310</itemUserTimingDur>
+
+               <macroIn>c01/l04/dve07</macroIn>
+
+              <macroOut>r00</macroOut>
+
+               <mosExternalMetadata>
+
+                  <mosScope>PLAYLIST</mosScope>
+
+               <mosSchema>http://MOSA4.com/mos/supported_schemas/MOSAXML2.08</mosSchema>
+
+                  <mosPayload>
+
+                     <Owner>SHOLMES</Owner>
+
+                     <transitionMode>2</transitionMode>
+
+                     <transitionPoint>463</transitionPoint>
+
+                     <source>a</source>
+
+                     <destination>b</destination>
+
+                  </mosPayload>
+
+               </mosExternalMetadata>
+
+            </storyItem>
+
+           <p>...as you can see, the flames were quite high. </p>
+
+         </storyBody>
+
+         <mosExternalMetadata>
+
+            <mosScope>PLAYLIST</mosScope>
+
+         <mosSchema>http://NCSA4.com/mos/supported_schemas/NCSAXML2.08</mosSchema>
+
+           <mosPayload>
+
+               <Owner>SHOLMES</Owner>
+
+               <changedBy>MPalmer</changedBy>
+
+               <length>463</length>
+
+               <show>10 pm</show>
+
+           </mosPayload>
+
+         </mosExternalMetadata>
+
+     </roStorySend>
+
+   </ncsReqStoryAction >
+
+</mos>

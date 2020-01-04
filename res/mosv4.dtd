@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MOS.DTD version 4.0 June 7, 2019-->
+
+<!--Thanks to Jiri Basek Aveco s.r.o (Jiri.Basek@aveco.com) and the Octopus Team for the following list of modifications due to original DTD bugs :
+
+       1:  element "roStorySend" : comma added between "mosExternalMetadata*" and "storyBody"
+
+       2:  element "roStorySend" old version : deactivated
+
+       3:  element "item" : ending bracket added after "mosExternalMetadata*"
+
+       4:  element "command" : "READY", "EXECUTE", "PAUSE", "STOP", "SIGNAL" are not elements but predefined strings
+
+       5:  element "mosObj" : "externalData" changed to "mosExternalData"
+
+       6:  ATTLIST metadata : deactivated. ? should it be changed to ATTLIST mosExternalMetadata ?
+
+       8:  element "mosScope" : "object, "story", "playlist" are not elements but predefined strings
+
+       A9: element "mos" : "reqMachineInfo" changed to "reqMachInfo"
+
+       A10:  element "storyNum" defined
+
+      
+
+Additional changes have been made to the formatting and sequence of the elements in order to better match the order of structures presented in the MOS Protocol document.
+
+ 
+
+-->
+
+<!-- MOS Message - One message type per message -->
+
+<!ELEMENT mos ((ncsAck | ncsReqAppInfo | ncsReqAppMode | ncsStoryRequest | ncsItemRequest | ncsItem | ncsReqAppClose | (mosID, ncsID, messageID, (mosAck | mosObj | mosReqObj | mosReqAll | mosListAll | mosObjCreate | mosItemReplace | ncsAppInfo | roAck | roCreate | roReplace | roMetadataReplace | roDelete | roReq | roList | roReqAll | roListAll | roStat | roReadyToAir | roStoryAppend | roStoryInsert | roStoryReplace | roStoryMove | roStorySwap | roStoryDelete | roStoryMoveMultiple | roItemInsert | roItemReplace | roItemMoveMultiple | roItemDelete | roElementAction | roItemStat | roElementStat | roItemCue | roCtrl | roStorySend | keepAlive | heartbeat | reqMachInfo | listMachInfo | mosReqSearchableSchema | mosListSearchableSchema | mosReqObjList | mosObjList | mosReqObjAction | roReqStoryAction))))>
+
+<!ELEMENT mosAck (objID, objRev, status, statusDescription)>
+
+<!ELEMENT mosObj (objID, objSlug, mosAbstract?, objGroup?, objType, objTB, objRev, objDur, status, objAir, objPaths?, createdBy, created, changedBy, changed, description, mosExternalMetadata*)>
+
+<!ELEMENT mosReqObj (objID)>
+
+<!ELEMENT mosReqAll (pause)>
+
+<!ELEMENT mosListAll (mosObj*)>
+
+<!ELEMENT mosReqSearchableSchema EMPTY>
+
+<!ATTLIST mosReqSearchableSchema username CDATA #IMPLIED>
+
+<!ELEMENT mosListSearchableSchema (mosSchema)>
+
+<!ATTLIST mosListSearchableSchema username CDATA #IMPLIED>
+
+<!ELEMENT mosReqObjList (queryID, listReturnStart, listReturnEnd, generalSearch, mosSchema, searchGroup*)>
+
+<!ATTLIST mosReqObjList username CDATA #IMPLIED>
+
+<!ELEMENT searchGroup (searchField+)>
+
+<!ELEMENT searchField EMPTY>
+
+<!ATTLIST searchField
+
+XPath CDATA #REQUIRED
+
+sortByOrder CDATA #IMPLIED
+
+sortType CDATA #IMPLIED
+
+> 
+
+<!ELEMENT mosObjList (queryID, listReturnStart, listReturnEnd, listReturnTotal, listReturnStatus?, list?)>
+
+<!ATTLIST mosObjList username CDATA #IMPLIED>
+
+<!ELEMENT list (mosObj+)>
+
+<!ELEMENT generalSearch (#PCDATA)>
+
+<!ELEMENT listReturnStart (#PCDATA)>
+
+<!ELEMENT listReturnEnd (#PCDATA)>
+
+<!ELEMENT listReturnTotal (#PCDATA)>
+
+<!ELEMENT listReturnStatus (#PCDATA)>
+
+<!ELEMENT queryID (#PCDATA)>
+
+<!ELEMENT mosObjCreate (objSlug, objGroup?, objType, objTB, objDur?, time?, createdBy?, description?, mosExternalMetadata*)>
+
+<!ELEMENT mosItemReplace (roID, storyID, item)>
+
+<!ELEMENT ncsAck (status, statusDescription?)>
+
+<!ELEMENT ncsAppInfo (mosObj?, roID?, storyID?, item?, ncsInformation)>
+
+<!ELEMENT roAck (roID, roStatus, (storyID, itemID, objID, itemChannel?, status)*)>
+
+<!ELEMENT roCreate (roID, roSlug, roChannel?, roEdStart?, roEdDur?, roTrigger?, macroIn?, macroOut?, mosExternalMetadata*, story*)>
+
+<!ELEMENT roReplace (roID, roSlug, roChannel?, roEdStart?, roEdDur?, roTrigger?, macroIn?, macroOut?, mosExternalMetadata*, story*)>
+
+<!ELEMENT roMetadataReplace (roID, roSlug, roChannel?, roEdStart?, roEdDur?, roTrigger?, macroIn?, macroOut?, mosExternalMetadata?)>
+
+<!ELEMENT roDelete (roID)>
+
+<!ELEMENT roReq (roID)>
+
+<!ELEMENT roList (roID, roSlug, roChannel?, roEdStart?, roEdDur?, roTrigger?, macroIn?, macroOut?, mosExternalMetadata*, story*)>
+
+<!ELEMENT roListAll (ro*)>
+
+<!ELEMENT ro (roID, roSlug?, roChannel?, roEdStart?, roEdDur?, roTrigger?, mosExternalMetadata*)>
+
+<!ELEMENT roReadyToAir (roID, roAir)>
+
+<!ELEMENT roStoryAppend (roID, story+)>
+
+<!ELEMENT roStoryInsert (roID, storyID, story+)>
+
+<!ELEMENT roElementAction (roID, element_target?, element_source)>
+
+<!ELEMENT element_target  (storyID, itemID?)>
+
+<!ELEMENT element_source  (story+ | item+ | storyID+ | itemID+)>
+<!ATTLIST roElementAction operation CDATA #REQUIRED>
+
+<!ELEMENT mosReqObjAction (objSlug?, mosAbstract?, objGroup?, objType?, objTB?, objDur?, time?, createdBy?, changedBy?, changed?, description?, mosExternalMetadata*)>
+
+<!ATTLIST mosReqObjAction
+
+      operation CDATA #REQUIRED
+
+      objID CDATA #IMPLIED
+
+> 
+
+<!ELEMENT roReqStoryAction (roStorySend)>
+
+<!ATTLIST roReqStoryAction
+
+      operation CDATA #REQUIRED
+
+      leaseLock CDATA #IMPLIED
+
+      username CDATA #IMPLIED
+
+> 
+
+<!ELEMENT ncsReqStoryAction (roStorySend)>
+
+<!ATTLIST ncsReqStoryAction
+
+      operation CDATA #REQUIRED
+
+>
+
+<!ELEMENT roStorySend (roID, storyID, storySlug?, storyNum?, storyBody, mosExternalMetadata*)>
+
+<!ATTLIST storyBody Read1stMEMasBody CDATA #IMPLIED>
+
+<!ELEMENT roElementStat (roID, storyID?, itemID, objID?, itemChannel?, status, time)>
+
+<!ATTLIST roElementStat  element CDATA  #REQUIRED>
+
+<!ELEMENT roItemCue (mosID, roID, storyID, itemID, roEventType, roEventTime, mosExternalMetadata*)>
+
+<!ELEMENT roCtrl (roID, storyID, itemID, command, mosExternalMetadata*)>
+
+<!ELEMENT keepalive (Name)>
+
+<!ELEMENT heartbeat (time)>
+
+<!ELEMENT listMachInfo (manufacturer, model, hwRev, swRev, DOM, SN, ID, time, opTime?, mosRev, supportedProfiles, defaultActiveX*, mosExternalMetadata*)>
+
+<!ELEMENT supportedProfiles (mosProfile)>
+
+<!ELEMENT mosProfile (#PCDATA)
+
+<!ATTLIST mosProfile number CDATA #REQUIRED>
+
+<!ATTLIST supportedProfiles deviceType CDATA #REQUIRED>
+
+<!ELEMENT defaultActiveX (mode, controlFileLocation, controlSlug, controlName, controlDefaultParams)>
+
+<!ELEMENT story (storyID, storySlug?, storyNum?, mosExternalMetadata*, item*)>
+
+<!ELEMENT description (#PCDATA | p | em | tab)*>
+
+<!ELEMENT storyBody ((storyPresenter*, storyPresenterRR*, p*, storyItem*)*)>
+
+<!ELEMENT storyItem (itemID, itemSlug?, objID, mosID, mosAbstract?, itemChannel?, itemEdStart?, itemEdDur?, itemUserTimingDur?, itemTrigger?, macroIn?, macroOut?, mosExternalMetadata*)>
+
+<!ELEMENT item (itemID, itemSlug?, objID, mosID, mosPlugInID?, mosAbstract?, objPaths?, itemChannel?, itemEdStart?, itemEdDur?, itemUserTimingDur?, itemTrigger?, macroIn?, macroOut?, mosExternalMetadata*)>
+
+<!ELEMENT mosExternalMetadata (mosScope?, mosSchema, mosPayload)>
+
+<!ELEMENT ncsInformation (userID, runContext, software, UImetric*)>
+
+<!ELEMENT UImetric ((startx, starty, endx, endy, mode, canClose?)?)>
+
+<!ATTLIST UImetric num CDATA #REQUIRED>
+
+<!ELEMENT ncsItem (item)>
+
+<!ELEMENT ncsReqAppMode (UImetric)>
+
+<!ELEMENT software (manufacturer, product, version)>
+
+<!ELEMENT b (#PCDATA | i | u)*>
+
+<!ELEMENT i (#PCDATA | b | u)*>
+
+<!ELEMENT p (#PCDATA | em | tab | pi | pkg | b | i | u)*>
+
+<!ELEMENT pi (#PCDATA | b | i | u)*>
+
+<!ELEMENT pkg (#PCDATA | b | i | u)*>
+
+<!ELEMENT u (#PCDATA | b | i)*>
+
+<!ELEMENT mosID (#PCDATA)>
+
+<!ELEMENT ncsID (#PCDATA)>
+
+<!ELEMENT canClose (#PCDATA)>
+
+<!ELEMENT changed (#PCDATA)>
+
+<!ELEMENT changedBy (#PCDATA)>
+
+<!ELEMENT command (#PCDATA)>
+
+<!-- valid values for "command" are "READY", "EXECUTE", "PAUSE", "STOP", "SIGNAL" -->
+
+<!ELEMENT controlDefaultParams (#PCDATA)>
+
+<!ELEMENT controlFileLocation (#PCDATA)>
+
+<!ELEMENT controlName (#PCDATA)>
+
+<!ELEMENT controlSlug (#PCDATA)>
+
+<!ELEMENT created (#PCDATA)>
+
+<!ELEMENT createdBy (#PCDATA)>
+
+<!ELEMENT DOM (#PCDATA)>
+
+<!ELEMENT em (#PCDATA)>
+
+<!ELEMENT endx (#PCDATA)>
+
+<!ELEMENT endy (#PCDATA)>
+
+<!ELEMENT hwRev (#PCDATA)>
+
+<!ELEMENT ID (#PCDATA)>
+
+<!ELEMENT itemChannel (#PCDATA)>
+
+<!ELEMENT itemEdDur (#PCDATA)>
+
+<!ELEMENT itemEdStart (#PCDATA)>
+
+<!ELEMENT itemID (#PCDATA)>
+
+<!ELEMENT itemSlug (#PCDATA)>
+
+<!ELEMENT itemTrigger (#PCDATA)>
+
+<!ELEMENT itemUserTimingDur (#PCDATA)>
+
+<!ELEMENT macroIn (#PCDATA)>
+
+<!ELEMENT macroOut (#PCDATA)>
+
+<!ELEMENT manufacturer (#PCDATA)>
+
+<!ELEMENT mode (#PCDATA)>
+
+<!ELEMENT model (#PCDATA)>
+
+<!ELEMENT mosAbstract ANY>
+
+<!ELEMENT mosPayload ANY>
+
+<!ELEMENT mosPlugInID (#PCDATA)>
+
+<!ELEMENT mosProfile (#PCDATA)>
+
+<!ELEMENT mosSchema (#PCDATA)>
+
+<!ELEMENT mosScope (#PCDATA)>
+
+<!-- valid values for "mosScope" are "OBJECT", "STORY", "PLAYLIST" -->
+
+<!ELEMENT mosRev (#PCDATA)>
+
+<!ELEMENT ncsItemRequest EMPTY>
+
+<!ELEMENT ncsReqAppClose EMPTY>
+
+<!ELEMENT ncsReqAppInfo EMPTY>
+
+<!ELEMENT ncsStoryRequest EMPTY>
+
+<!ELEMENT objAir (#PCDATA)>
+
+<!ELEMENT objDur (#PCDATA)>
+
+<!ELEMENT objGroup (#PCDATA)>
+
+<!ELEMENT objID (#PCDATA)>
+
+<!ELEMENT objPaths ( objPath*, objProxyPath*, objMetadataPath)>
+
+<!ELEMENT objPath (#PCDATA)>
+
+<!ELEMENT objProxyPath (#PCDATA)>
+
+<!ELEMENT objMetadataPath (#PCDATA)>
+
+<!ATTLIST   objPath techDescription CDATA #REQUIRED>
+
+<!ATTLIST   objProxyPath techDescription CDATA #REQUIRED>
+
+<!ATTLIST   objMetadataPath techDescription CDATA #REQUIRED>
+
+<!ELEMENT objRev (#PCDATA)>
+
+<!ELEMENT objSlug (#PCDATA)>
+
+<!ELEMENT objTB (#PCDATA)>
+
+<!ELEMENT objType (#PCDATA)>
+
+<!ELEMENT opTime (#PCDATA)>
+
+<!ELEMENT pause (#PCDATA)>
+
+<!ELEMENT product (#PCDATA)>
+
+<!ELEMENT messageID (#PCDATA)>
+
+<!ELEMENT reqMachInfo EMPTY>
+
+<!ELEMENT roAir (#PCDATA)>
+
+<!ELEMENT roID (#PCDATA)>
+
+<!ELEMENT roChannel (#PCDATA)>
+
+<!ELEMENT roCtrlCmd (#PCDATA)>
+
+<!ELEMENT roCtrlTime (#PCDATA)>
+
+<!ELEMENT roEdDur (#PCDATA)>
+
+<!ELEMENT roEdStart (#PCDATA)>
+
+<!ELEMENT roEventTime (#PCDATA)>
+
+<!ELEMENT roEventType (#PCDATA)>
+
+<!ELEMENT roReqAll EMPTY>
+
+<!ELEMENT roSlug (#PCDATA)>
+
+<!ELEMENT roStatus (#PCDATA)>
+
+<!ELEMENT roTrigger (#PCDATA)>
+
+<!ELEMENT runContext (#PCDATA)>
+
+<!ELEMENT SN (#PCDATA)>
+
+<!ELEMENT startx (#PCDATA)>
+
+<!ELEMENT starty (#PCDATA)>
+
+<!ELEMENT status (#PCDATA)>
+
+<!ELEMENT statusDescription (#PCDATA)>
+
+<!ELEMENT storyID (#PCDATA)>
+
+<!ELEMENT storyNum (#PCDATA)>
+
+<!ELEMENT storyPresenter (#PCDATA)>
+
+<!ELEMENT storyPresenterRR (#PCDATA)>
+
+<!ELEMENT storySlug (#PCDATA)>
+
+<!ELEMENT swRev (#PCDATA)>
+
+<!ELEMENT tab (#PCDATA)>
+
+<!ELEMENT time (#PCDATA)>
+
+<!ELEMENT userID (#PCDATA)>
+
+<!ELEMENT version (#PCDATA)>
+
+<!-- Attributes -->
+
+<!ATTLIST mos
+
+       version CDATA #FIXED "-//MOS Group//DTD MOS 2.8.2//EN"
+
+       changeDate CDATA #FIXED "09 April 2005"
+
+> 
+
+<!-- <!ATTLIST metadata xml:space (default | preserve) 'preserve'>  -->

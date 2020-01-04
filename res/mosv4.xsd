@@ -1,0 +1,3026 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MOS version="2.8.5 September 15, 2009">
+ 
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+
+<xsd:element name='mos'>
+
+  <xsd:complexType>
+
+   <xsd:choice>
+
+    <xsd:element ref='ncsAck'/>
+
+    <xsd:element ref='ncsReqAppInfo'/>
+
+    <xsd:element ref='ncsReqAppMode'/>
+
+    <xsd:element ref='ncsStoryRequest'/>
+
+    <xsd:element ref='ncsItemRequest'/>
+
+    <xsd:element ref='ncsItem'/>
+
+    <xsd:element ref='ncsReqAppClose'/>
+
+    <xsd:element ref="ncsReqStoryAction"/>
+
+    <xsd:sequence>
+
+     <xsd:element ref='mosID'/>
+
+     <xsd:element ref='ncsID'/>
+
+     <xsd:element ref='messageID'/>
+
+     <xsd:choice>
+
+      <xsd:element ref='mosAck'/>
+
+      <xsd:element ref='mosObj'/>
+
+      <xsd:element ref='mosReqObj'/>
+
+      <xsd:element ref='mosReqAll'/>
+
+      <xsd:element ref='mosListAll'/>
+
+      <xsd:element ref='mosObjCreate'/>
+
+      <xsd:element ref='mosItemReplace'/>
+
+      <xsd:element ref='ncsAppInfo'/>
+
+      <xsd:element ref='roAck'/>
+
+      <xsd:element ref='roCreate'/>
+
+      <xsd:element ref='roReplace'/>
+
+      <xsd:element ref='roMetadataReplace'/>
+
+      <xsd:element ref='roDelete'/>
+
+      <xsd:element ref='roReq'/>
+
+      <xsd:element ref='roList'/>
+
+      <xsd:element ref='roReqAll'/>
+
+      <xsd:element ref='roListAll'/>
+
+      <xsd:element ref='roReadyToAir'/>
+
+      <xsd:element ref='roElementAction'/>
+
+      <xsd:element ref='roElementStat'/>
+
+      <xsd:element ref='roItemCue'/>
+
+      <xsd:element ref='roCtrl'/>
+
+      <xsd:element ref='roStorySend'/>
+
+      <xsd:element ref='keepAlive'/>      
+
+      <xsd:element ref='heartbeat'/>
+
+      <xsd:element ref='reqMachInfo'/>
+
+      <xsd:element ref='listMachInfo'/>
+
+      <xsd:element ref='mosReqSearchableSchema'/>
+
+      <xsd:element ref='mosListSearchableSchema'/>
+
+      <xsd:element ref='mosReqObjList'/>
+
+      <xsd:element ref='mosObjList'/>
+
+      <xsd:element ref='mosReqObjAction'/>
+
+      <xsd:element ref='roReqStoryAction'/>
+
+     </xsd:choice>
+
+    </xsd:sequence>
+
+   </xsd:choice>
+
+   <xsd:attribute name='version' type='xsd:string' fixed='-//MOS Group//DTD MOS 2.8.2//EN'/>
+
+   <xsd:attribute name='changeDate' type='xsd:string' fixed='09 April 2005'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+<xsd:element name='mosAck'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='objID'/>
+
+    <xsd:element ref='objRev'/>
+
+    <xsd:element ref='status'/>
+
+    <xsd:element ref='statusDescription'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosObj'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='objID'/>
+
+    <xsd:element ref='objSlug'/>
+
+    <xsd:element ref='mosAbstract' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objGroup' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objType'/>
+
+    <xsd:element ref='objTB'/>
+
+    <xsd:element ref='objRev'/>
+
+    <xsd:element ref='objDur'/>
+
+    <xsd:element ref='status'/>
+
+    <xsd:element ref='objAir'/>
+
+    <xsd:element ref='objPaths' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='createdBy'/>
+
+    <xsd:element ref='created'/>
+
+    <xsd:element ref='changedBy'/>
+
+    <xsd:element ref='changed'/>
+
+    <xsd:element ref='description'/>
+
+    <!--<xsd:element ref='\' minOccurs='0' maxOccurs='unbounded'/>-->
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosReqObj'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='objID'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosReqAll'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='pause'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosListAll'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mosObj' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosReqSearchableSchema'>
+
+  <xsd:complexType>
+
+   <xsd:attribute name='username' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosListSearchableSchema'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mosSchema'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='username' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosReqObjList'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='queryID'/>
+
+    <xsd:element ref='listReturnStart'/>
+
+    <xsd:element ref='listReturnEnd'/>
+
+    <xsd:element ref='generalSearch'/>
+
+    <xsd:element ref='mosSchema'/>
+
+    <xsd:element ref='searchGroup' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='username' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='searchGroup'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='searchField' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='searchField'>
+
+  <xsd:complexType>
+
+   <xsd:attribute name='XPath' type='xsd:string' use='required'/>
+
+   <xsd:attribute name='sortByOrder' type='xsd:string' use='optional'/>
+
+   <xsd:attribute name='sortType' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosObjList'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='queryID'/>
+
+    <xsd:element ref='listReturnStart'/>
+
+    <xsd:element ref='listReturnEnd'/>
+
+    <xsd:element ref='listReturnTotal'/>
+
+    <xsd:element ref='listReturnStatus' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='list' minOccurs='0' maxOccurs='1'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='username' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='list'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mosObj' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='generalSearch'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='listReturnStart'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='listReturnEnd'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='listReturnTotal'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='listReturnStatus'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='queryID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosObjCreate'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='objSlug'/>
+
+    <xsd:element ref='objGroup' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objType'/>
+
+    <xsd:element ref='objTB'/>
+
+    <xsd:element ref='objDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='time' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='createdBy' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='description' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosItemReplace'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='item'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+ 
+
+<xsd:element name='ncsAck'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='status'/>
+
+    <xsd:element ref='statusDescription' minOccurs='0' maxOccurs='1'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsAppInfo'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mosObj' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roID' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='storyID' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='item' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='ncsInformation'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roAck'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roStatus'/>
+
+    <xsd:sequence minOccurs='0' maxOccurs='unbounded'>
+
+     <xsd:element ref='storyID'/>
+
+     <xsd:element ref='itemID'/>
+
+     <xsd:element ref='objID'/>
+
+     <xsd:element ref='itemChannel' minOccurs='0' maxOccurs='1'/>
+
+     <xsd:element ref='status'/>
+
+    </xsd:sequence>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roCreate'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roSlug'/>
+
+    <xsd:element ref='roChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroIn' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroOut' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='story' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roReplace'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roSlug'/>
+
+    <xsd:element ref='roChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroIn' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroOut' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='story' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roMetadataReplace'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roSlug'/>
+
+    <xsd:element ref='roChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroIn' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroOut' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='1'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roDelete'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roReq'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roList'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roSlug'/>
+
+    <xsd:element ref='roChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroIn' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroOut' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='story' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roListAll'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='ro' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ro'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roSlug' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='roTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roReadyToAir'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='roAir'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStoryAppend'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='story' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStoryInsert'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='story' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStoryReplace'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='story' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStoryMove'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='storyID'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStorySwap'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='storyID'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStoryDelete'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStoryMoveMultiple'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roItemInsert'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='item' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roItemReplace'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='item' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roItemMoveMultiple'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roItemDelete'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+  <xsd:element name='roElementAction'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='element_target' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='element_source'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='operation' use='required'>
+
+   <xsd:simpleType>
+
+         <xsd:restriction base="xsd:string">
+
+            <xsd:enumeration value="INSERT"/>
+
+            <xsd:enumeration value="REPLACE"/>
+
+            <xsd:enumeration value="MOVE"/>
+
+            <xsd:enumeration value="DELETE"/>
+
+            <xsd:enumeration value="SWAP"/>
+
+    </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:attribute>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='element_target'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID' minOccurs='0' maxOccurs='1'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='element_source'>
+
+  <xsd:complexType>
+
+   <xsd:choice>
+
+    <xsd:element ref='story' maxOccurs='unbounded'/>
+
+    <xsd:element ref='item' maxOccurs='unbounded'/>
+
+    <xsd:element ref='storyID' maxOccurs='unbounded'/>
+
+    <xsd:element ref='itemID' maxOccurs='unbounded'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosReqObjAction'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='objSlug' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosAbstract' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objGroup' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objType' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objTB' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='time' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='createdBy' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='changedBy' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='changed' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='description' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='operation' type='xsd:string' use='required'/>
+
+   <xsd:attribute name='objID' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roReqStoryAction'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roStorySend'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='operation' type='xsd:string' use='required'/>
+
+   <xsd:attribute name='leaseLock' type='xsd:string' use='optional'/>
+
+   <xsd:attribute name='username' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStorySend'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='storySlug' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='storyNum' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='storyBody'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roItemStat'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='objID'/>
+
+    <xsd:element ref='itemChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='status'/>
+
+    <xsd:element ref='time'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roElementStat'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='objID' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='status'/>
+
+    <xsd:element ref='time'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roItemCue'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mosID'/>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='roEventType'/>
+
+    <xsd:element ref='roEventTime'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roCtrl'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='roID'/>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='command'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='keepAlive'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='heartbeat'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='time'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='listMachInfo'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='manufacturer'/>
+
+    <xsd:element ref='model'/>
+
+    <xsd:element ref='hwRev'/>
+
+    <xsd:element ref='swRev'/>
+
+    <xsd:element ref='DOM'/>
+
+    <xsd:element ref='SN'/>
+
+    <xsd:element ref='ID'/>
+
+    <xsd:element ref='time'/>
+
+    <xsd:element ref='opTime' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosRev'/>
+
+    <xsd:element ref='SupportedProfiles'/>
+
+    <xsd:element ref='defaultActiveX' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='defaultActiveX'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mode'/>
+
+    <xsd:element ref='controlFileLocation'/>
+
+    <xsd:element ref='controlSlug'/>
+
+    <xsd:element ref='controlName'/>
+
+    <xsd:element ref='controlDefaultParams'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='story'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='storyID'/>
+
+    <xsd:element ref='storySlug' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='storyNum' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='item' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='description'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='p'/>
+
+    <xsd:element ref='em'/>
+
+    <xsd:element ref='tab'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storyBody'>
+
+  <xsd:complexType>
+
+   <xsd:sequence minOccurs='0' maxOccurs='unbounded'>
+
+    <!-- These elements should reside inside the p tag
+
+<xsd:element ref='storyPresenter' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='storyPresenterRR' minOccurs='0' maxOccurs='unbounded'/>
+
+-->
+
+    <xsd:element ref='p' minOccurs='0' maxOccurs='unbounded'/>
+
+    <!-- Should reside in the p tag
+
+<xsd:element ref='storyItem' minOccurs='0' maxOccurs='unbounded'/>
+
+-->
+
+   </xsd:sequence>
+
+   <xsd:attribute name='Read1stMEMasBody' type='xsd:string' use='optional'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storyItem'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='itemSlug' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objID'/>
+
+    <xsd:element ref='mosID'/>
+
+    <xsd:element ref='mosAbstract' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemUserTimingDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroIn' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroOut' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='item'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='itemID'/>
+
+    <xsd:element ref='itemSlug' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objID'/>
+
+    <xsd:element ref='mosID'/>
+
+    <xsd:element ref='mosPlugInID' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosAbstract' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='objPaths' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemChannel' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemEdStart' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemEdDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemUserTimingDur' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='itemTrigger' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroIn' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='macroOut' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosExternalMetadata' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosExternalMetadata'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='mosScope' minOccurs='0' maxOccurs='1'/>
+
+    <xsd:element ref='mosSchema'/>
+
+    <xsd:element ref='mosPayload'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsInformation'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='userID'/>
+
+    <xsd:element ref='runContext'/>
+
+    <xsd:element ref='software'/>
+
+    <xsd:element ref='UImetric' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='UImetric'>
+
+  <xsd:complexType>
+
+   <xsd:sequence minOccurs='0' maxOccurs='1'>
+
+    <xsd:element ref='startx'/>
+
+    <xsd:element ref='starty'/>
+
+    <xsd:element ref='endx'/>
+
+    <xsd:element ref='endy'/>
+
+    <xsd:element ref='mode'/>
+
+    <xsd:element ref='canClose' minOccurs='0' maxOccurs='1'/>
+
+   </xsd:sequence>
+
+   <xsd:attribute name='num' type='xsd:string' use='required'/>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsItem'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='item'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+  
+
+  <xsd:element name='ncsReqStoryAction'>
+
+    <xsd:complexType>
+
+      <xsd:sequence>
+
+        <xsd:element ref='roStorySend'/>
+
+      </xsd:sequence>
+
+      <xsd:attribute name='operation' use='required'>
+
+        <xsd:simpleType>
+
+          <xsd:restriction base="xsd:string">
+
+            <xsd:enumeration value="NEW"/>
+
+            <xsd:enumeration value="UPDATE"/>
+
+            <xsd:enumeration value="REPLACE"/>
+
+          </xsd:restriction>
+
+        </xsd:simpleType>
+
+      </xsd:attribute>
+
+    </xsd:complexType>
+
+  </xsd:element>
+
+  
+
+<xsd:element name='ncsReqAppMode'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='UImetric'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='software'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='manufacturer'/>
+
+    <xsd:element ref='product'/>
+
+    <xsd:element ref='version'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='b'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='i'/>
+
+    <xsd:element ref='u'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='i'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='b'/>
+
+    <xsd:element ref='u'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='p'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='em'/>
+
+    <xsd:element ref='tab'/>
+
+    <xsd:element ref='pi'/>
+
+    <xsd:element ref='pkg'/>
+
+    <xsd:element ref='b'/>
+
+    <xsd:element ref='i'/>
+
+    <xsd:element ref='u'/>
+
+    <xsd:element ref='storyItem'/>
+
+    <xsd:element ref='storyPresenter'/>
+
+    <xsd:element ref='storyPresenterRR'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='pi'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='b'/>
+
+    <xsd:element ref='i'/>
+
+    <xsd:element ref='u'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='pkg'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='b'/>
+
+    <xsd:element ref='i'/>
+
+    <xsd:element ref='u'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='u'>
+
+  <xsd:complexType mixed='true'>
+
+   <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+
+    <xsd:element ref='b'/>
+
+    <xsd:element ref='i'/>
+
+   </xsd:choice>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='canClose' type='xsd:boolean'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='changed' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='changedBy'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='command' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='controlDefaultParams' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='controlFileLocation' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='controlName'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='controlSlug'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='created' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='createdBy'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='DOM' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='em' type='xsd:string'>
+
+</xsd:element>
+
+<xsd:element name='endx' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='endy' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='hwRev'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemChannel' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemEdDur'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemEdStart'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemSlug'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemTrigger' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='itemUserTimingDur'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='macroIn'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='macroOut'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='manufacturer'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mode'>
+
+      <xsd:simpleType>
+
+      <xsd:restriction base="xsd:string">
+
+            <xsd:enumeration value="MODALDIALOG"/>
+
+            <xsd:enumeration value="MODELESS"/>
+
+            <xsd:enumeration value="CONTAINED"/>
+
+            <xsd:enumeration value="TOOLBAR"/>
+
+      </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='model'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosAbstract'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+   <xsd:any namespace="##any" processContents="skip"/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosPayload'>
+
+   <!-- Does not match the examples provided on the mosProtocol web site nor doe it match what ENPS sends-->
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+   <xsd:any namespace="##any" processContents="skip"/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosPlugInID' type='xsd:string'>
+
+</xsd:element>
+
+  <xsd:element name='SupportedProfiles'>
+
+    <xsd:complexType>
+
+      <xsd:sequence>
+
+        <xsd:element ref='mosProfile' minOccurs='1' maxOccurs='8'/>
+
+      </xsd:sequence>
+
+      <xsd:attribute name='deviceType' use='required'>
+
+        <xsd:simpleType>
+
+          <xsd:restriction base="xsd:string">
+
+            <xsd:enumeration value="MOS"/>
+
+            <xsd:enumeration value="NCS"/>
+
+          </xsd:restriction>
+
+        </xsd:simpleType>
+
+      </xsd:attribute>
+
+    </xsd:complexType>
+
+  </xsd:element>
+
+  
+
+  <xsd:element name='mosProfile' >
+
+    <xsd:complexType>
+
+    <xsd:simpleContent>
+
+      <xsd:extension base='xsd:boolean'>
+
+        <xsd:attribute name='number' use='required'>
+
+          <xsd:simpleType>
+
+            <xsd:restriction base="xsd:int">
+
+              <xsd:enumeration value="0"/>
+
+              <xsd:enumeration value="1"/>
+
+              <xsd:enumeration value="2"/>
+
+              <xsd:enumeration value="3"/>
+
+              <xsd:enumeration value="4"/>
+
+              <xsd:enumeration value="5"/>
+
+              <xsd:enumeration value="6"/>
+
+              <xsd:enumeration value="7"/>
+
+            </xsd:restriction>
+
+          </xsd:simpleType>
+
+        </xsd:attribute>
+
+      </xsd:extension>
+
+    </xsd:simpleContent>
+
+    </xsd:complexType>
+
+  </xsd:element>
+
+ 
+
+<xsd:element name='mosSchema' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosScope'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:enumeration value="OBJECT"/>
+
+    <xsd:enumeration value="STORY"/>
+
+    <xsd:enumeration value="PLAYLIST"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='mosRev'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+ 
+
+<xsd:element name='ncsItemRequest'>
+
+  <xsd:complexType/>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsReqAppClose'>
+
+  <xsd:complexType/>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsReqAppInfo'>
+
+  <xsd:complexType/>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='ncsStoryRequest'>
+
+  <xsd:complexType/>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objAir'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:enumeration value="READY"/>
+
+    <xsd:enumeration value="NOTREADY"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objDur'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objGroup'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objPaths'>
+
+  <xsd:complexType>
+
+   <xsd:sequence>
+
+    <xsd:element ref='objPath' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='objProxyPath' minOccurs='0' maxOccurs='unbounded'/>
+
+    <xsd:element ref='objMetadataPath' minOccurs='0' maxOccurs='unbounded'/>
+
+   </xsd:sequence>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objPath'>
+
+  <xsd:complexType>
+
+  <xsd:simpleContent>
+
+  <xsd:extension base='xsd:string'>
+
+   <xsd:attribute name='techDescription' type='xsd:string' use='required'/>
+
+   </xsd:extension>
+
+   </xsd:simpleContent>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objProxyPath'>
+
+  <xsd:complexType>
+
+  <xsd:simpleContent>
+
+  <xsd:extension base='xsd:string'>
+
+   <xsd:attribute name='techDescription' type='xsd:string' use='required'/>
+
+   </xsd:extension>
+
+   </xsd:simpleContent>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objMetadataPath'>
+
+  <xsd:complexType>
+
+  <xsd:simpleContent>
+
+  <xsd:extension base='xsd:string'>
+
+   <xsd:attribute name='techDescription' type='xsd:string' use='required'/>
+
+   </xsd:extension>
+
+   </xsd:simpleContent>
+
+  </xsd:complexType>
+
+</xsd:element>
+
+ 
+
+ 
+
+<xsd:element name='objRev'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers up to 999 only-->
+
+    <xsd:pattern value="\d{3}$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objSlug'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objTB'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='objType'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:enumeration value="STILL"/>
+
+    <xsd:enumeration value="AUDIO"/>
+
+<xsd:enumeration value="VIDEO"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='opTime'  type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='pause'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Positive integers only-->
+
+    <xsd:pattern value="^\d*\.{0,1}\d+$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='product' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='messageID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:int">
+
+   <!--Whole numbers start with 1, cannot start at 0 -->
+
+    <xsd:pattern value="^[-+]?[1-9]\d*\.?[0]*$"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='reqMachInfo'>
+
+  <xsd:complexType/>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roAir'>
+
+  <xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:enumeration value="READY"/>
+
+<xsd:enumeration value="NOTREADY"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roChannel'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roCtrlCmd'>
+
+  <xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:enumeration value="READY"/>
+
+<xsd:enumeration value="EXECUTE"/>
+
+<xsd:enumeration value="PAUSE"/>
+
+<xsd:enumeration value="STOP"/>
+
+<xsd:enumeration value="SIGNAL"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element  name='roCtrlTime' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roEdDur'  type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roEdStart' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roEventTime' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roEventType' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roReqAll'>
+
+  <xsd:complexType/>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roSlug'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roStatus'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='roTrigger' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='runContext'>
+
+  <xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:enumeration value="BROWSE"/>
+
+<xsd:enumeration value="EDIT"/>
+
+<xsd:enumeration value="CREATE"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='SN'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='startx' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='starty' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='status'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='statusDescription'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storyID'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storyNum'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storyPresenter' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storyPresenterRR' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='storySlug'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='swRev'>
+
+<xsd:simpleType>
+
+   <xsd:restriction base="xsd:string">
+
+    <xsd:maxLength value="128"/>
+
+  </xsd:restriction>
+
+</xsd:simpleType>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='tab' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='time' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='userID' type='xsd:string'>
+
+</xsd:element>
+
+ 
+
+<xsd:element name='version' type='xsd:string'>
+
+</xsd:element>
+
+</xsd:schema>
+</MOS>
