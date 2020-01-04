@@ -14,7 +14,7 @@ Implementation status:
 * [ ]  Profile 7
 
 As an experimental feature, the Profile 5 roCtrl will be implemented in a way that it can support IoT device
-control using MQTT protocol. An example use case is the red light control.
+control using MQTT protocol. An example use case is the red light control. In the future this could be expanded to actual machine controls with protocols like Ember+ (https://github.com/Lawo/ember-plus) or VDCP.
 
 For more information about the MOS protocol, see https://www.mosprotocol.com
 This project is not affiliated with MOS Group.
