@@ -1,10 +1,22 @@
+# Field Descriptions
+
+
 
 | Field | Description |
 | -------- | ---------------- |
 | b | Bold face type:  Specifies that text between tags is in boldface type. |
+| canClose | Indicates whether an NCS can close the window in which it is hosting an ActiveX control when the control sends an ncsReqAppClose message. Permitted values are TRUE and FALSE |
+|   |   |
+|   |   |
+|   |   |
+|   |   |
+|   |   |
+|   |   |
+|   |   |
+|   |   |
 
 
-canClose           
+          
 Indicates whether an NCS can close the window in which it is hosting an ActiveX control when the control sends an ncsReqAppClose message. Permitted values are TRUE and FALSE.
 
 changed
