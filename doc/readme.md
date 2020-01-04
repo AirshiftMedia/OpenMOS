@@ -8,4 +8,6 @@ This section contains the documentation of the OpenMOS project.
 
 - [Profiles according to the MOS protocol standard](./profiles.md)
 
+- [MOS v4 Field Descriptions](./mosfields.md)
+
 - [Release Notes](./releasenotes.md)
