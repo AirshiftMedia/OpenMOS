@@ -25,6 +25,30 @@ Inherits ServerSocket
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Port"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinimumSocketsAvailable"
+			Visible=true
+			Group="Behavior"
+			InitialValue="2"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaximumSocketsConnected"
+			Visible=true
+			Group="Behavior"
+			InitialValue="10"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -49,18 +73,10 @@ Inherits ServerSocket
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
+			Name="mCurrentSocket"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

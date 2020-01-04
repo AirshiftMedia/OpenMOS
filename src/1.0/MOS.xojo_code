@@ -71,5 +71,10 @@ Protected Module MOS
 	#tag EndMethod
 
 
+	#tag Enum, Name = enumRoStatus, Type = Integer, Flags = &h0
+		OK
+	#tag EndEnum
+
+
 End Module
 #tag EndModule

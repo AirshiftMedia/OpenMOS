@@ -70,6 +70,22 @@ Inherits ConsoleApplication
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="mCurrentSocket"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mUTCTimeFormat"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass
