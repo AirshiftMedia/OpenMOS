@@ -48,8 +48,7 @@
 | macroOut | Macro Transition Out: Defined by MOS. 128 chars max. | 
 | manufacturer | Used in MOS ActiveX messages. Manufacturer: Text description. 128 chars max. |
 | messageID | Unique identifier sent with requests. See chapter 4.1.6 for a detailed description.  Format: signed integer 32-bit, value above or equal to 1, decimal or hexadecimal.  An empty messageID tag is allowed for messages when used in the ActiveX interface. |
-| mode | Used in MOS ActiveX messages. How the ActiveX Plug-In window appears in the NCS Host window: MODALDIALOG, MODELESS, CONTAINED, TOOLBAR.
- |
+| mode | Used in MOS ActiveX messages. How the ActiveX Plug-In window appears in the NCS Host window: MODALDIALOG, MODELESS, CONTAINED, TOOLBAR.|
 | model | Model: Text description. 128 chars max. |
 | modifiedBy | Modified by: Name of the person or process that last modified the object in the MOS. This can be stored in a language other than English. 128 chars max. |
 | mosAbstract | Abstract of the Object intended for display by the NCS.  This field may contain HTML and DHTML markup.  The specific contents are limited by the NCS vendor's implementation.  Length is unlimited but reasonable use is suggested. |
@@ -59,7 +58,7 @@
 | mosMsg data type | Used in MOS ActiveX messages. Clipboard format used for OLE drag and drop from the ActiveX Plug-In. |
 | mosPayload | mosPayload is apart of the mosExternalMetadat block, and it generally includes essential metadata that is referenced within the mosSchema. |
 | mosPlugInID | Used in MOS ActiveX messages. ID that the NCS Host can use to instantiate the ActiveX Plug-In. 128 chars max. |
-| mosProfile | This field is intended to define a device's supported MOS Profiles.  A "YES" or "NO" value is required for each profile. |
+| mosProfile | This field is intended to define a device's supported MOS Profiles.  A "YES" or "NO" value is required for each profile.|
 | mosRev | MOS Revision: Text description. 128 chars max. |
 | mosSchema | mosSchema is the descriptive schema used within the mosPayload.  The value is to be an implied pointer or URL to the actual schema document. |
 | mosScope | This field implies the extent to which the mosExternalMetadata block will move through the NCS workflow. Accepted values are "OBJECT" "STORY" and "PLAYLIST" |
