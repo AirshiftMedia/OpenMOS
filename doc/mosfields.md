@@ -6,31 +6,14 @@
 | -------- | ---------------- |
 | b | Bold face type:  Specifies that text between tags is in boldface type. |
 | canClose | Indicates whether an NCS can close the window in which it is hosting an ActiveX control when the control sends an ncsReqAppClose message. Permitted values are TRUE and FALSE |
+| changed | Changed Time/Date: Time the object was last changed in the MOS. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC. |
+| changedBy | Last Changed by: Name of the person or process that last changed the object in the MOS. This can be stored in a language other than English. |
+| command | roItemCtrl command: The commands READY, EXECUTE, PAUSE and STOP, as well as general indicator, SIGNAL, can be addressed at each MOS Structure level.  In other words, a single command can begin EXECUTION of an entire Running Order, of a Story containing multiple Items, or of a single Item. |
+| controlDefaultParams | This value represents the parameters that can be passed to an ActiveX. |
 |   |   |
 |   |   |
 |   |   |
 |   |   |
-|   |   |
-|   |   |
-|   |   |
-|   |   |
-
-
-          
-Indicates whether an NCS can close the window in which it is hosting an ActiveX control when the control sends an ncsReqAppClose message. Permitted values are TRUE and FALSE.
-
-changed
-Changed Time/Date: Time the object was last changed in the MOS. Format is YYYY-MM-DD'T'hh:mm:ss[,ddd]['Z'], e.g. 2009-04-11T14:22:07,125Z or 2009-04-11T14:22:07,125-05:00.  Parameters displayed within brackets are optional. [,ddd] represents fractional time in which all three digits must be present. ['Z'] indicates time zone which can be expressed as an offset from UTC in hours and minutes.  Optionally, the time zone may be replaced by the character 'Z' to indicate UTC.
-
-changedBy
-Last Changed by: Name of the person or process that last changed the object in the MOS. This can be stored in a language other than English.
-
-command
-roItemCtrl command: The commands READY, EXECUTE, PAUSE and STOP, as well as general indicator, SIGNAL, can be addressed at each MOS Structure level.  In other words, a single command can begin EXECUTION of an entire Running Order, of a Story containing multiple Items, or of a single Item.
-
-controlDefaultParams
-
-This value represents the parameters that can be passed to an ActiveX.
 
 controlFileLocation
 
