@@ -122,3 +122,5 @@
 | version | Used in MOS ActiveX messages. String indicating the version of the NCS Host. 128 chars max. |
 |  |  |
 
+## OpenMOS Implementation Notes
+-userName is the AD Logon Name or LDAP userPrincipalName to allow further user information retrieval from AD or LDAP
