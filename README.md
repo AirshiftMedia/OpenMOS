@@ -26,3 +26,7 @@ When the maturity level reaches early beta, the project shall make available nat
 - /doc contains the technical documentation
 - /res contains the additional resources such as image files
 - /src contains the source code files in xojo_project -format
+
+## Latest news
+
+30/5/2021   Reworking codebase from Xojo to Go because of performance reasons, will take a while
