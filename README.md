@@ -3,7 +3,7 @@ An implementation of Media Object Server using MOS Protocol 4.0. Support for leg
 The project will aim at compliance with Profile 7.
 
 Implementation status:
-* [x]  Core
+* [ ]  Core
 * [ ]  Profile 0
 * [ ]  Profile 1
 * [ ]  Profile 2
