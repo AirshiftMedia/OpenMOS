@@ -23,6 +23,7 @@ When the maturity level reaches early beta, the project shall make available nat
 
 ## Repository Folder Structure
 - /bin contains the built application binaries
+- /pkg contaings the Go packages
 - /doc contains the technical documentation
 - /res contains the additional resources such as image files
 - /src contains the source code files in xojo_project -format
