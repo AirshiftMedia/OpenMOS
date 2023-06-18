@@ -36,7 +36,8 @@ type mosAck struct {
 }
 
 type heartBeat struct {
-	time string
+	xml.Name	xml.Name	`xml:"heartbeat"`
+	time string		`xml:"time"`
 }
 
 func main() {
