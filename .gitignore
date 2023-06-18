@@ -1,11 +1,4 @@
-# Xojo (formerly REALbasic and Real Studio)
+# Golang
 
-Builds*
-*.debug
-*.debug.app
-Debug*.exe
-Debug*/Debug*.exe
-Debug*/Debug*\ Libs
-*.rbuistate
-*.xojo_uistate
-*.obsolete
+src/go.mod
+.vscode/launch.json
