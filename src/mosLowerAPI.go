@@ -14,6 +14,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 	// logger "github.com/cihub/seelog"
 )
 
@@ -36,8 +37,8 @@ type mosAck struct {
 }
 
 type heartBeat struct {
-	xml.Name	xml.Name	`xml:"heartbeat"`
-	time string		`xml:"time"`
+	xmlName xml.Name `xml:"heartbeat"`
+	time    string   `xml:"time"`
 }
 
 func main() {
@@ -80,7 +81,12 @@ func main() {
 // process connections
 
 func handleConnection(conn net.Conn) {
+
 	defer conn.Close()
+
+	// setting timestamp in MOS format (RFC3339 without timezone and Z separator)
+
+	mosTimestamp := time.Now().Format("2006-01-02") + "T" + time.Now().Format("15:04:05")
 
 }
 
@@ -91,5 +97,18 @@ func parseCommand(cmdLine string) (cmd, param string) {
 	}
 	cmd = strings.TrimSpace(parts[0])
 	param = strings.TrimSpace(parts[1])
+	return
+}
+
+func createMessage(mosType string) (msgString string) {
+	msg := &mosMsg{mosID: "enter.your.mosid", ncsID: "enter.your.ncsid", messageID: "1"}
+
+	return
+}
+
+func getNextMessageID(idString string) {
+
+	idString = "1" // TODO
+
 	return
 }
