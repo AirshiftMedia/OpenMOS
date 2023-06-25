@@ -2,16 +2,16 @@ Folder Structure Convention and Packages
 ===========================
 ```bash
 ├── main
-│   ├── main.go `package: main`
+│   ├── main.go [package: main]
 │   ├── backend
-│   │   ├── listener.go
+│   │   ├── listener.go [package: backend]
 │   ├── config
-│   │   ├── config.go
+│   │   ├── config.go [package: config]
 │   ├── storage
-│   │   ├── mongodb.go
-│   │   ├── objects.go
+│   │   ├── mongodb.go [package: storage]
+│   │   ├── objects.go [package: storage]
 │   ├── tests
-│   │   ├── main_test.go
+│   │   ├── main_test.go [package: tests]
 ```
 
 Framework Dependencies
