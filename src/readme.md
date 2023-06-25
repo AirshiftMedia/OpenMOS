@@ -1,17 +1,17 @@
 Source File Structure and Packages
 ===========================
 ```bash
-├── main
+├── **main**
 │   ├── main.go [package: main]
 │   │
-│   ├── backend
+│   ├── **backend**
 │   │   ├── listener.go [package: backend]
-│   ├── config
+│   ├── **config**
 │   │   ├── config.go [package: config]
-│   ├── storage
+│   ├── **storage**
 │   │   ├── mongodb.go [package: storage]
 │   │   ├── objects.go [package: storage]
-│   ├── tests
+│   ├── **tests**
 │   │   ├── main_test.go [package: tests]
 ```
 
