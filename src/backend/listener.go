@@ -42,5 +42,3 @@ func createMessage(mosType string) (msgString string) {
 
 	return
 }
-
-
