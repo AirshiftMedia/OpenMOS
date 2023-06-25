@@ -1,5 +1,5 @@
 # Open Media Object Server
-An implementation of Media Object Server using MOS Protocol 4.0. Support for legacy 2.8.2 might be added later.
+An implementation of Media Object Server using MOS Protocol 4.0 with WebSocket as a communication method.
 The project will aim at compliance with Profile 7.
 
 Implementation status:
@@ -17,17 +17,17 @@ As an experimental feature, the Profile 5 roCtrl will be implemented in a way th
 control using MQTT protocol. An example use case is the red light control. In the future this could be expanded to actual machine controls with protocols like Ember+ (https://github.com/Lawo/ember-plus) or VDCP.
 
 For more information about the MOS protocol, see https://www.mosprotocol.com
-This project is not affiliated with MOS Group.
+This project is not affiliated with MOS Group and will use the word compliance according to the requirements set by the MOS Group.
 
-When the maturity level reaches early beta, the project shall make available native binaries for Windows, macOS and Linux. Dependencies are to be kept as minimal as possible.
+When the maturity level reaches early beta, the project shall make available a Docker image. Dependencies are to be kept as minimal as possible, using frameworks that are still maintained and active.
 
 ## Repository Folder Structure
-- /bin contains the built application binaries
-- /pkg contaings the Go packages
+- /bin contains the locally built application binaries
+- /pkg contains the local Go packages
+- /src contains the Go source files, readme.md explains the folder and package structure
 - /doc contains the technical documentation
 - /res contains the additional resources such as image files
-- /src contains the source code files in xojo_project -format
 
 ## Latest news
 
-30/5/2021   Reworking codebase from Xojo to Go because of performance reasons, will take a while
+30/5/2023   Reworking codebase from Xojo to Go because of performance reasons, will take a while
