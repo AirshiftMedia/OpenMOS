@@ -1,7 +1,7 @@
 # Release Notes
 
 ## 1.0
-TBA est Q1/2020
+TBA est Q3/2023
 
 <hr />
 
