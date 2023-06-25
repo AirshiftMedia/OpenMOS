@@ -1,14 +1,16 @@
-## Source file structure
-
-```bash
+Folder Structure Convention
+===========================
+.
 ├── main
 │   ├── main.go
 │   ├── backend
 │   ├── config
 │   ├── storage
 
-```
-
-## Frameworks
+Framework Dependencies
+===========================
 
 - ws https://github.com/gobwas/ws 
+
+Tests
+===========================

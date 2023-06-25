@@ -43,9 +43,4 @@ func createMessage(mosType string) (msgString string) {
 	return
 }
 
-func getNextMessageID(idString string) {
 
-	idString = "1" // TODO
-
-	return
-}

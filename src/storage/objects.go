@@ -24,3 +24,10 @@ type heartBeat struct {
 	xmlName xml.Name `xml:"heartbeat"`
 	time    string   `xml:"time"`
 }
+
+func getNextMessageID(idString string) {
+
+	idString = "1" // TODO
+
+	return
+}
