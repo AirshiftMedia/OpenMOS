@@ -1,9 +1,9 @@
-Folder Structure Convention and Packages
+Source File Structure and Packages
 ===========================
 ```bash
 ├── main
 │   ├── main.go [package: main]
-│
+│   │
 │   ├── backend
 │   │   ├── listener.go [package: backend]
 │   ├── config
