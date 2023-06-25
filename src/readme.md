@@ -3,6 +3,7 @@ Folder Structure Convention and Packages
 ```bash
 ├── main
 │   ├── main.go [package: main]
+│
 │   ├── backend
 │   │   ├── listener.go [package: backend]
 │   ├── config
