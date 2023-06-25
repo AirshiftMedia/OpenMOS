@@ -1,8 +1,8 @@
-Folder Structure Convention
+Folder Structure Convention and Packages
 ===========================
 ```bash
 ├── main
-│   ├── main.go
+│   ├── main.go `package: main`
 │   ├── backend
 │   │   ├── listener.go
 │   ├── config
@@ -21,3 +21,4 @@ Framework Dependencies
 
 Tests
 ===========================
+- `/tests/main_test.go`
