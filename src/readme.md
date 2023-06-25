@@ -4,8 +4,14 @@ Folder Structure Convention
 ├── main
 │   ├── main.go
 │   ├── backend
+│   │   ├── listener.go
 │   ├── config
+│   │   ├── config.go
 │   ├── storage
+│   │   ├── mongodb.go
+│   │   ├── objects.go
+│   ├── tests
+│   │   ├── main_test.go
 ```
 
 Framework Dependencies
