@@ -1,11 +1,12 @@
 Folder Structure Convention
 ===========================
-.
+```bash
 ├── main
 │   ├── main.go
 │   ├── backend
 │   ├── config
 │   ├── storage
+```
 
 Framework Dependencies
 ===========================
