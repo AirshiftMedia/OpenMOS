@@ -3,15 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 )
-
-func initAPI() {
-
-	router := newRouter()
-
-}
 
 func main() {
 
@@ -21,11 +14,18 @@ func main() {
 		fmt.Println("Arguments provided for initialization: ", arg)
 	}
 
+	// load config
+
+	configPath := "/etc/OpenMOS/mosConfig.yaml"
+
+	cfg, err := config.initConfig(configPath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Starting OpenMOS service: Now listening on port ")
+
 	//
-
-	fmt.Println("Starting OpenMOS service: Now listening on port 8081")
-
-	//
-
 
 }
