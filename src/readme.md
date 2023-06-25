@@ -1,9 +1,13 @@
 ## Source file structure
 
-main
-|- backend
-|- config
-|_ storage
+```bash
+├── main
+│   ├── main.go
+│   ├── backend
+│   ├── config
+│   ├── storage
+
+```
 
 ## Frameworks
 
