@@ -11,7 +11,7 @@ import (
 // implements YAML config
 // follows the example in https://github.com/koddr/example-go-config-yaml
 
-type Config struct {
+type ConfigItems struct {
 	common struct {
 		mosVersion string `yaml:"mosVersion"` // will not implement legacy features such as 10540/10541 ports
 	}
@@ -22,6 +22,13 @@ type Config struct {
 		writeBuffer string `yaml:"readBuffer"`
 		sslKeyPath  string `yaml:"sslKeyPath"`
 	}
+}
+
+type Values interface {
+	getValue() string
+	setValue(key string, value string)
+	getCommonValues() []string
+	getListenerValues() []string 
 }
 
 func initConfigPath() error {
