@@ -1,44 +1,56 @@
-// implements the main MOS API listener on port 443
-// implementation as raw TCP API server according to MOS Protocol version 4.0
+// implements the main MOS API listener using websockets
+// implementation according to MOS Protocol version 4.0
 // https://mosprotocol.com/wp-content/MOS-Protocol-Documents/MOS-Protocol-Version-4.0.pdf
-// server structure based on Vladimir Vivien's examples https://github.com/vladimirvivien
-// TODO: implement observing by sentry.io if it somehow can utilize seelog
-// TODO: Using hosted MongoDB as a backend
-// TODO: Using Kafka as an event bus
 
-package backend
+package listener
 
 import (
-	"net"
-	"strings"
-	"time"
-	// logger "github.com/cihub/seelog"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 // process connections
 
-func handleConnection(conn net.Conn) {
+var PORT = ":8081"
 
-	defer conn.Close()
-
-	// setting timestamp in MOS format (RFC3339 without timezone and Z separator)
-
-	mosTimestamp := time.Now().Format("2006-01-02") + "T" + time.Now().Format("15:04:05")
-
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
-func parseCommand(cmdLine string) (cmd, param string) {
-	parts := strings.Split(cmdLine, " ")
-	if len(parts) != 2 {
-		return "", ""
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "HELLO")
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Client connected from ", r.Host)
+
+	ws, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil {
+		log.Println("Error while upgrading socket connection: ", err)
+		return
 	}
-	cmd = strings.TrimSpace(parts[0])
-	param = strings.TrimSpace(parts[1])
-	return
 }
 
-func createMessage(mosType string) (msgString string) {
-	msg := &mosMsg{mosID: "enter.your.mosid", ncsID: "enter.your.ncsid", messageID: "1"}
+defer ws.Close()
 
-	return
+for {
+	mt, message, err := ws.ReadMessage()
+	if err != nil {
+		log.println("Error while reading message from ", r.Host, ", error: ", err)
+		break
+	}
+
+	// at this point we have received a message from the client
+	// this is for debugging only:
+
+	fmt.Println(message)
+
 }

@@ -1,6 +1,7 @@
 .PHONY: dev
 
 dev:
+go get github.com/gorilla/websocket
 go get gopkg.in/yaml.v2
 go run main.go
 

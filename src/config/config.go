@@ -26,7 +26,7 @@ type ConfigItems struct {
 
 type Values interface {
 	getValue() string
-	setValue(key string, value string)
+	setValue(key string, value string) ()
 	getCommonValues() []string
 	getListenerValues() []string 
 }
@@ -80,7 +80,7 @@ func initConfig(configPath string) (*Config, error) {
 	
 	}
 
-	defer file.Close()
+	// defer file.Close()
 
 	// init YAML decode and start decoding
 
