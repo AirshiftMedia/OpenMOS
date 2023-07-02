@@ -9,7 +9,7 @@ import (
 )
 
 // implements YAML config
-// follows the example in https://github.com/koddr/example-go-config-yaml
+// follows the example from https://github.com/koddr/example-go-config-yaml
 
 type ConfigItems struct {
 	common struct {
@@ -51,6 +51,7 @@ func initConfigPath() error {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	f1.Close()
 
 }
