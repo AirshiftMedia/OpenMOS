@@ -4,21 +4,24 @@ Source File Structure and Packages
 ├── main
 │   ├── main.go [package: main]
 │   │
-│   ├── backend
-│   │   ├── listener.go [package: backend]
+│   ├── handlers
+│   │   ├── listener.go [package: handlers]
 │   ├── config
 │   │   ├── config.go [package: config]
+│   ├── observer
+│   │   ├── sentry.go [package: observer]
+│   ├── models
+│   │   ├── model.go [package: model]
 │   ├── storage
-│   │   ├── mongodb.go [package: storage]
-│   │   ├── objects.go [package: storage]
-│   ├── tests
-│   │   ├── main_test.go [package: tests]
+│   │   ├── storage.go [package: storage]
 ```
 
 Framework Dependencies
 ===========================
 
-- ws https://github.com/gobwas/ws 
+WebSocket is based on Gorilla framework. While the project is currently abandoned, it is still expected to be a valid option.
+
+- github.com/gorilla/websocket
 
 Tests
 ===========================

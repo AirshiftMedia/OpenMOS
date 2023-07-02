@@ -15,6 +15,11 @@ type ConfigItems struct {
 	common struct {
 		mosVersion string `yaml:"mosVersion"` // will not implement legacy features such as 10540/10541 ports
 	}
+	sentry struct {
+		sentryKey	string `yaml:"sentryKey"`
+		sentryProject	string	`yaml:"sentryProject"`
+		sentryEnvironment	string	`yaml:"sentryEnvironment"`
+	}
 	listener struct {
 		mosPort     string `yaml:"mosPort"`
 		timeout     string `yaml:"mosPortTimeout"`
