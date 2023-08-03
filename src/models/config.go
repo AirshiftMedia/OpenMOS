@@ -5,12 +5,6 @@ package models
 type ConfigItems struct {
 	debugMode  bool   `yaml:debugMode`
 	configPath string `yaml:configPath`
-}
-
-/*
-type ConfigItems struct {
-	debugMode  bool   `yaml:debugMode`
-	configPath string `yaml:configPath`
 	mosVersion string `yaml:"mosVersion"` // will not implement legacy features such as 10540/10541 ports
 
 	sentryKey         string `yaml:"sentryKey"`
@@ -23,6 +17,23 @@ type ConfigItems struct {
 	writeBuffer string `yaml:"readBuffer"`
 	sslKeyPath  string `yaml:"sslKeyPath"`
 }
-*/
 
 type ConfigUtil func(*ConfigItems)
+
+func writeConfig(ConfigItems) bool {
+	return true
+}
+
+func readConfig() *ConfigItems {
+	return &ConfigItems{
+		debugMode: true,
+	}
+}
+
+func readValue(key string) string {
+	return "42"
+}
+
+func writeValue(key string, value string) bool {
+	return true
+}

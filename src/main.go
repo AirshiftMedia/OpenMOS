@@ -36,6 +36,8 @@ func main() {
 
 	// load config
 
+	myConfig := readConfig()
+
 	// check if arguments were provided when invoked
 
 	for _, arg := range os.Args {
