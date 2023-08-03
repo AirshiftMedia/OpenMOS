@@ -10,7 +10,7 @@ package handlers
 
 /*
 
-var PORT = ":8081"
+var PORT = ":8080"
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
