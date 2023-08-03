@@ -2,26 +2,39 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"openmos/models"
 	"os"
-	"time"
-
-	"github.com/getsentry/sentry-go"
 )
 
-buildVersion := 100
+// buildVersion := 100
+
+func defaultConfig() models.ConfigItems {
+	return models.ConfigItems{
+		configPath: "/etc/OpenMOS/mosConfig.yaml",
+	}
+}
+
+func debugMode(conf *models.ConfigItems) {
+	debugMode = true
+}
+
+type Listener struct {
+	models.ConfigItems
+}
+
+func newListener(conf ...models.ConfigUtil) *Listener {
+	c := defaultConfig()
+	for _, fn := range conf {
+		fn(&c)
+	}
+	return &Listener{
+		ConfigItems: conf,
+	}
+}
 
 func main() {
 
 	// load config
-
-	configPath := "/etc/OpenMOS/mosConfig.yaml"
-
-	cfg, err := config.initConfig(configPath)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	// check if arguments were provided when invoked
 
@@ -29,9 +42,10 @@ func main() {
 		fmt.Println("Arguments provided for initialization: ", arg)
 	}
 
-
 	fmt.Println("Starting OpenMOS service: Now listening on port ")
 
-	//
+	l := newListener()
+
+	fmt.Printf("%+v\n", l)
 
 }

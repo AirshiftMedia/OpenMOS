@@ -1,12 +1,12 @@
 package models
 
-import (
-	"encoding/xml"
-	"time"
-)
+//	"encoding/xml"
+//	"time"
 
 // defining the standard objects as structs
 // these will be turned into xml without the header according to MOS standard
+
+/*
 
 type mosMsg struct {
 	XMLName   xml.Name `xml:"mos"`
@@ -38,3 +38,5 @@ func getNextMessageID(idString string) {
 func mosTimestamp() string {
 	return time.Now().Format("2006-01-02") + "T" + time.Now().Format("15:04:05")
 }
+
+*/

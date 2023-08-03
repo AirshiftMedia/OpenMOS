@@ -1,16 +1,9 @@
 package observer
 
-import (
-	"fmt"
-	"log"
-	"os"
-	"time"
-
-	"github.com/getsentry/sentry-go"
-)
-
 // init Sentry.io monitoring
 // see docs https://docs.sentry.io/platforms/go/
+
+/*
 
 func initSentry() {
 
@@ -46,3 +39,5 @@ func initSentry() {
 	sentry.CaptureMessage("OpenMOS initialized at ", hostname)
 
 }
+
+*/

@@ -6,12 +6,11 @@ Source File Structure and Packages
 │   │
 │   ├── handlers
 │   │   ├── listener.go [package: handlers]
-│   ├── config
-│   │   ├── config.go [package: config]
 │   ├── observer
 │   │   ├── sentry.go [package: observer]
 │   ├── models
-│   │   ├── model.go [package: model]
+│   │   ├── objects.go [package: models]
+│   │   ├── config.go [package: config]
 │   ├── storage
 │   │   ├── storage.go [package: storage]
 ```

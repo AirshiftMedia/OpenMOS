@@ -2,17 +2,13 @@
 // implementation according to MOS Protocol version 4.0
 // https://mosprotocol.com/wp-content/MOS-Protocol-Documents/MOS-Protocol-Version-4.0.pdf
 
-package listener
+package handlers
 
-import (
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/websocket"
-)
+//	"github.com/gorilla/websocket"
 
 // process connections
+
+/*
 
 var PORT = ":8081"
 
@@ -54,3 +50,5 @@ for {
 	fmt.Println(message)
 
 }
+
+*/
