@@ -20,7 +20,10 @@ type ConfigItems struct {
 
 type ConfigUtil func(*ConfigItems)
 
-func writeConfig(ConfigItems) bool {
+func writeConfig(c ConfigItems) bool {
+
+	// TODO: encode in YAML and write as a file into configPath
+
 	return true
 }
 
