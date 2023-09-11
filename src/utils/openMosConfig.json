@@ -1,0 +1,18 @@
+{
+    "common": {
+            "sslKeyPath": ""
+    },
+
+    "monitor": {
+        "sentryKey": "",
+        "sentryProject": "",
+        "sentryEnvironment": ""
+    },
+
+    "mos": {
+        "mosPort": "",
+        "mosTimeout": "",
+        "mosReadBuffer": "",
+        "mosWriteBuffer": ""
+    }
+}

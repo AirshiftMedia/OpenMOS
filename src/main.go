@@ -2,52 +2,40 @@ package main
 
 import (
 	"fmt"
-	"openmos/models"
-	"os"
 )
-
-// buildVersion := 100
-
-func defaultConfig() models.ConfigItems {
-	return models.ConfigItems{
-		configPath: "/etc/OpenMOS/mosConfig.yaml",
-	}
-}
-
-func debugMode(conf *models.ConfigItems) {
-	debugMode = true
-}
-
-type Listener struct {
-	models.ConfigItems
-}
-
-func newListener(conf ...models.ConfigUtil) *Listener {
-	c := defaultConfig()
-	for _, fn := range conf {
-		fn(&c)
-	}
-	return &Listener{
-		ConfigItems: conf,
-	}
-}
 
 func main() {
 
-	// load config
+	// init logging with Sentry
 
-	myConfig := readConfig()
+	/* err := sentry.Init(sentry.ClientOptions{
+		Dsn:           myDSN,
+		EnableTracing: false,
+	})
 
-	// check if arguments were provided when invoked
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	for _, arg := range os.Args {
-		fmt.Println("Arguments provided for initialization: ", arg)
+	defer sentry.Flush(2 * time.Second)
+
+	logger := slog.New(slogsentry.Option{Level: slog.LevelDebug}.NewSentryHandler())
+	logger = logger.
+		With("environment", "dev").
+		With("release", buildVersion)
+
+	logger.Info("Starting OpenMOS server instance ", logger.Int("mos-id", 1), logger.Int("build-version"), buildVersion)
+	*/
+	// init viper config
+
+	config, err := utils.loadConfig()
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(config)
 	}
 
 	fmt.Println("Starting OpenMOS service: Now listening on port ")
-
-	l := newListener()
-
-	fmt.Printf("%+v\n", l)
 
 }
