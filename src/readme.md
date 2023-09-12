@@ -10,7 +10,8 @@ Source File Structure and Packages
 │   │   ├── sentry.go [package: observer]
 │   ├── models
 │   │   ├── objects.go [package: models]
-│   │   ├── config.go [package: config]
+│   ├── utils
+│   │   ├── config.go [package: utils]
 │   ├── storage
 │   │   ├── storage.go [package: storage]
 ```

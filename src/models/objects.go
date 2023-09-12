@@ -1,10 +1,23 @@
 package models
 
+import "encoding/xml"
+
 //	"encoding/xml"
 //	"time"
 
 // defining the standard objects as structs
 // these will be turned into xml without the header according to MOS standard
+
+func testStruct() {
+
+}
+
+type mosMsg struct {
+	XMLName   xml.Name `xml:"mos"`
+	mosID     string   `xml:"mosID"`
+	ncsID     string   `xml:"ncsID"`
+	messageID string   `xml:"messageID"`
+}
 
 /*
 

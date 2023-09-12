@@ -27,13 +27,14 @@ func main() {
 
 	logger.Info("Starting OpenMOS server instance ", logger.Int("mos-id", 1), logger.Int("build-version"), buildVersion)
 	*/
+
 	// init viper config
 
 	for _, arg := range os.Args {
 		fmt.Println("Arguments provided for server initialization: ", arg)
 	}
 
-	config, err := utils.loadConfig()
+	config, err := config.loadConfig()
 
 	if err != nil {
 		fmt.Println(err)
