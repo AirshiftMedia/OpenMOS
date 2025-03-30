@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"os"
 	"os/signal"
 	"strings"
@@ -19,7 +20,34 @@ import (
 )
 
 func main() {
-	// Initialize standard logger first
+	// Define command-line flags
+	generateConfig := flag.String("generate-config", "", "Generate a default configuration file at the specified path and exit")
+	configPath := flag.String("config", "", "Path to the configuration file (default: search for config.yaml)")
+
+	// Parse flags
+	flag.Parse()
+
+	// Handle config generation if requested
+	if *generateConfig != "" {
+		// Initialize standard logger first
+		standardLogger := logger.DefaultLogger()
+		standardLogger.Info("Generating default configuration file...")
+
+		err := config.GenerateDefaultConfig(*generateConfig)
+		if err != nil {
+			standardLogger.Fatalf("Failed to generate configuration file: %v", err)
+		}
+
+		standardLogger.Infof("Configuration file generated at: %s", *generateConfig)
+		return
+	}
+
+	// Set config file path if provided
+	if *configPath != "" {
+		os.Setenv("CONFIG_FILE", *configPath)
+	}
+
+	// Initialize standard logger
 	standardLogger := logger.DefaultLogger()
 	standardLogger.Info("Starting OpenMOS server...")
 
@@ -113,23 +141,25 @@ func main() {
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
-	// Start server in a goroutine
+	// Start server monitoring
 	serverSpan := log.StartTransaction("server_lifecycle", "server")
 	serverSpan.SetTag("server_address", cfg.GetServerAddress())
 
+	// Start server in a goroutine
 	go func() {
 		defer serverSpan.Finish()
 
 		if err := tcpServer.Start(ctx); err != nil {
-			serverSpan.Status = "internal_error"
+			// Set error status on span
+			serverSpan.Status = sentry.SpanStatusInternalError
+
+			// Log and capture the error
 			log.CaptureException(err, map[string]string{
 				"component": "server",
 				"action":    "run",
 			}, nil)
 			log.Errorf("Server error: %v", err)
 			cancel()
-		} else {
-			serverSpan.Status = "ok"
 		}
 	}()
 
@@ -138,10 +168,6 @@ func main() {
 	// Wait for shutdown signal
 	sig := <-sigCh
 	log.Infof("Received signal: %v", sig)
-
-	// Create a context with timeout for shutdown
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer shutdownCancel()
 
 	// Cancel the server context to start the graceful shutdown
 	cancel()

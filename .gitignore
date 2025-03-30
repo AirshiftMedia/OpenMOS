@@ -1,3 +1,4 @@
 # Golang
 
 .vscode/launch.json
+src/config.yaml

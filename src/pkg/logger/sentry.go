@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -79,36 +80,37 @@ func (l *SentryLogger) CaptureException(err error, tags map[string]string, extra
 	// Log the error locally first
 	l.Error(err)
 
-	// Create a Sentry event
-	event := sentry.NewEvent()
-	event.Level = sentry.LevelError
-	event.Message = err.Error()
-
-	// Add environment and release if available
-	if l.environment != "" {
-		event.Environment = l.environment
-	}
-
-	if l.release != "" {
-		event.Release = l.release
-	}
-
 	// Add tags
 	if tags != nil && len(tags) > 0 {
-		for k, v := range tags {
-			event.Tags[k] = v
-		}
-	}
+		sentry.WithScope(func(scope *sentry.Scope) {
+			// Add tags
+			for k, v := range tags {
+				scope.SetTag(k, v)
+			}
 
-	// Add extra context
-	if extras != nil && len(extras) > 0 {
-		for k, v := range extras {
-			event.Extra[k] = v
-		}
-	}
+			// Add extra context
+			if extras != nil && len(extras) > 0 {
+				for k, v := range extras {
+					scope.SetExtra(k, v)
+				}
+			}
 
-	// Capture the exception
-	sentry.CaptureEvent(event)
+			// Set environment and release if available
+			if l.environment != "" {
+				scope.SetTag("environment", l.environment)
+			}
+
+			if l.release != "" {
+				scope.SetTag("release", l.release)
+			}
+
+			// Capture the exception
+			sentry.CaptureException(err)
+		})
+	} else {
+		// No tags, capture directly
+		sentry.CaptureException(err)
+	}
 }
 
 // CaptureMessage sends a message to Sentry
@@ -127,46 +129,57 @@ func (l *SentryLogger) CaptureMessage(message string, level sentry.Level, tags m
 		l.Error(message) // Don't call Fatal to avoid program termination
 	}
 
-	// Create a Sentry event
-	event := sentry.NewEvent()
-	event.Level = level
-	event.Message = message
+	// Capture with Sentry
+	sentry.WithScope(func(scope *sentry.Scope) {
+		scope.SetLevel(level)
 
-	// Add environment and release if available
-	if l.environment != "" {
-		event.Environment = l.environment
-	}
-
-	if l.release != "" {
-		event.Release = l.release
-	}
-
-	// Add tags
-	if tags != nil && len(tags) > 0 {
-		for k, v := range tags {
-			event.Tags[k] = v
+		// Add tags
+		if tags != nil && len(tags) > 0 {
+			for k, v := range tags {
+				scope.SetTag(k, v)
+			}
 		}
-	}
 
-	// Add extra context
-	if extras != nil && len(extras) > 0 {
-		for k, v := range extras {
-			event.Extra[k] = v
+		// Add extra context
+		if extras != nil && len(extras) > 0 {
+			for k, v := range extras {
+				scope.SetExtra(k, v)
+			}
 		}
-	}
 
-	// Capture the message
-	sentry.CaptureEvent(event)
+		// Set environment and release if available
+		if l.environment != "" {
+			scope.SetTag("environment", l.environment)
+		}
+
+		if l.release != "" {
+			scope.SetTag("release", l.release)
+		}
+
+		// Capture the message
+		sentry.CaptureMessage(message)
+	})
 }
 
 // StartTransaction starts a new Sentry transaction
-func (l *SentryLogger) StartTransaction(name, operation string) *sentry.Transaction {
-	return sentry.StartTransaction(
-		sentry.Context{
-			Name: name,
-			Op:   operation,
-		},
-	)
+func (l *SentryLogger) StartTransaction(name string, operation string) *sentry.Span {
+	// Create the context
+	ctx := context.Background()
+
+	// Create a span (transaction)
+	span := sentry.StartSpan(ctx, operation)
+	span.SetTag("transaction", name)
+
+	// Set additional info
+	if l.environment != "" {
+		span.SetTag("environment", l.environment)
+	}
+
+	if l.release != "" {
+		span.SetTag("release", l.release)
+	}
+
+	return span
 }
 
 // Flush waits until the Sentry client has sent all events
