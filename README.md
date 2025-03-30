@@ -1,4 +1,7 @@
 # OpenMOS Media Object Server
+
+![MOS Project Official Logo](/res/mosproject-logo.jpg)
+
 An implementation of Media Object Server using MOS Protocol 4.0 with WebSocket as a communication method.
 The project will aim at compliance with Profile 7.
 > [!NOTE]
@@ -24,8 +27,6 @@ This project is not affiliated with MOS Group and will use the word compliance a
 Logging system utilizes Sentry observability layer. Developer subscription is available for free at https://www.sentry.io
 
 When the maturity level reaches early beta, the project shall make available a Docker image. Dependencies are to be kept as minimal as possible, using frameworks that are still maintained and active.
-
-![MOS Project Official Logo](/res/mosproject-logo.jpg)
 
 ### Configuration file:
 
