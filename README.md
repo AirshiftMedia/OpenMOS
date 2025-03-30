@@ -26,3 +26,19 @@ Logging system utilizes Sentry observability layer. Developer subscription is av
 When the maturity level reaches early beta, the project shall make available a Docker image. Dependencies are to be kept as minimal as possible, using frameworks that are still maintained and active.
 
 ![MOS Project Official Logo](/res/mosproject-logo.jpg)
+
+### Configuration file:
+
+**Application configuration**
+app:
+  name: OpenMOS
+  version: 1.0.0
+  environment: development
+
+**MOS service configuration**
+server:
+  host: 0.0.0.0
+  port: 10540
+  readTimeout: 5s
+  writeTimeout: 5s
+  shutdownTimeout: 30s
