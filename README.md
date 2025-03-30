@@ -45,3 +45,9 @@ server:
   writeTimeout: 5s
   shutdownTimeout: 30s
   ```
+
+Generate default configuration file:
+```
+./openmos --generate-config=config.yaml
+```
+
