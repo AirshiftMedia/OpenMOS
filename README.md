@@ -24,3 +24,5 @@ This project is not affiliated with MOS Group and will use the word compliance a
 Logging system utilizes Sentry observability layer. Developer subscription is available for free at https://www.sentry.io
 
 When the maturity level reaches early beta, the project shall make available a Docker image. Dependencies are to be kept as minimal as possible, using frameworks that are still maintained and active.
+
+![MOS Project Official Logo](https://mosprotocol.com/wp-content/art/mos-2.jpg)
