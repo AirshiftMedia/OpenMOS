@@ -29,16 +29,18 @@ When the maturity level reaches early beta, the project shall make available a D
 
 ### Configuration file:
 
-**Application configuration**
+```
+# Application configuration
 app:
   name: OpenMOS
   version: 1.0.0
   environment: development
 
-**MOS service configuration**
+# MOS service configuration
 server:
   host: 0.0.0.0
   port: 10540
   readTimeout: 5s
   writeTimeout: 5s
   shutdownTimeout: 30s
+  ```
