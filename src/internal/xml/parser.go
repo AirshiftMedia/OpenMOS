@@ -147,6 +147,15 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		message = mosAck
 		p.buffer = remaining
 
+	case "ncsReqStoryAction":
+		var ncsReqStoryAction NCSReqStoryAction
+		remaining, err := p.parseMessage(&ncsReqStoryAction)
+		if err != nil {
+			return nil, p.buffer, err
+		}
+		message = ncsReqStoryAction
+		p.buffer = remaining
+
 	default:
 		return nil, p.buffer, fmt.Errorf("%w: %s", ErrUnknownMessage, messageType)
 	}

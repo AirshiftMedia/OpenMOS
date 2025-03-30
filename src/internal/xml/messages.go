@@ -10,6 +10,14 @@ type MOSMessage interface {
 	GetMessageType() string
 }
 
+// MosExternalMetadata represents external metadata in MOS messages
+type MosExternalMetadata struct {
+	XMLName    xml.Name `xml:"mosExternalMetadata"`
+	MosScope   string   `xml:"mosScope,omitempty"`
+	MosSchema  string   `xml:"mosSchema"`
+	MosPayload string   `xml:"mosPayload"`
+}
+
 // Heartbeat represents a MOS heartbeat message
 // Format: <heartbeat/>
 // or <heartbeat timestamp="timestamp" source="source"/>
@@ -131,6 +139,18 @@ type MOSAck struct {
 // GetMessageType returns the type of the message
 func (m MOSAck) GetMessageType() string {
 	return "mosAck"
+}
+
+// NCSAck represents an acknowledgment from the MOS to the NCS
+type NCSAck struct {
+	XMLName           xml.Name `xml:"ncsAck"`
+	Status            string   `xml:"status"`
+	StatusDescription string   `xml:"statusDescription,omitempty"`
+}
+
+// GetMessageType returns the type of the message
+func (m NCSAck) GetMessageType() string {
+	return "ncsAck"
 }
 
 // Now returns the current timestamp in MOS format

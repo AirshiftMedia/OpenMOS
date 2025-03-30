@@ -79,12 +79,14 @@ func (s *MOSService) ProcessRunningOrderInfo(ctx context.Context, roInfo xml.Run
 	if err != nil { // Running order doesn't exist
 		// Create new running order
 		ro := &model.RunningOrder{
-			ID:       roInfo.ID,
-			Slug:     roInfo.Slug,
-			Status:   model.StatusPending,
-			Duration: duration,
-			Channel:  roInfo.Channel,
-			Version:  1,
+			ID:        roInfo.ID,
+			Slug:      roInfo.Slug,
+			Status:    model.StatusPending,
+			Duration:  duration,
+			Channel:   roInfo.Channel,
+			Version:   1,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		}
 
 		_, err = s.runningOrderRepo.Create(ctx, ro)
@@ -104,146 +106,54 @@ func (s *MOSService) ProcessRunningOrderInfo(ctx context.Context, roInfo xml.Run
 		}
 	}
 
-	// Process stories
+	// Process stories (simplified - full implementation would handle deletions, etc.)
 	for i, storyInfo := range roInfo.Stories {
-		// Check if story exists
-		existingStory, err := s.storyRepo.Get(ctx, storyInfo.ID)
+		// Create or update each story
+		story := &model.Story{
+			ID:             storyInfo.ID,
+			RunningOrderID: roInfo.ID,
+			Slug:           storyInfo.Slug,
+			Number:         storyInfo.Number,
+			Status:         model.StatusPending,
+			Order:          i + 1,
+			CreatedAt:      time.Now(),
+			UpdatedAt:      time.Now(),
+		}
 
 		// Parse duration if provided
-		var storyDuration int
 		if storyInfo.Duration != "" {
-			storyDuration, err = strconv.Atoi(storyInfo.Duration)
-			if err != nil {
-				storyDuration = 0
+			if storyDuration, err := strconv.Atoi(storyInfo.Duration); err == nil {
+				story.Duration = storyDuration
 			}
 		}
 
-		if err != nil { // Story doesn't exist
-			// Create new story
-			story := &model.Story{
-				ID:             storyInfo.ID,
-				RunningOrderID: roInfo.ID,
-				Slug:           storyInfo.Slug,
-				Number:         storyInfo.Number,
-				Duration:       storyDuration,
-				Status:         model.StatusPending,
-				Order:          i + 1,
-			}
-
+		// Create or update the story
+		existingStory, err := s.storyRepo.Get(ctx, storyInfo.ID)
+		if err != nil {
+			// Story doesn't exist, create it
 			_, err = s.storyRepo.Create(ctx, story)
 			if err != nil {
 				return fmt.Errorf("failed to create story: %w", err)
 			}
-
-			// Process items
-			for j, itemInfo := range storyInfo.Items {
-				// Parse duration if provided
-				var itemDuration int
-				if itemInfo.Duration != "" {
-					itemDuration, err = strconv.Atoi(itemInfo.Duration)
-					if err != nil {
-						itemDuration = 0
-					}
-				}
-
-				// Create new item
-				item := &model.Item{
-					ID:       itemInfo.ID,
-					StoryID:  storyInfo.ID,
-					Slug:     itemInfo.Slug,
-					Duration: itemDuration,
-					ObjectID: itemInfo.ObjectID,
-					Status:   model.StatusPending,
-					Order:    j + 1,
-				}
-
-				_, err = s.itemRepo.Create(ctx, item)
-				if err != nil {
-					return fmt.Errorf("failed to create item: %w", err)
-				}
-			}
 		} else {
-			// Update existing story
+			// Story exists, update it
 			existingStory.Slug = storyInfo.Slug
 			existingStory.Number = storyInfo.Number
-			existingStory.Duration = storyDuration
 			existingStory.Order = i + 1
 			existingStory.UpdatedAt = time.Now()
+
+			if storyInfo.Duration != "" {
+				if storyDuration, err := strconv.Atoi(storyInfo.Duration); err == nil {
+					existingStory.Duration = storyDuration
+				}
+			}
 
 			err = s.storyRepo.Update(ctx, existingStory)
 			if err != nil {
 				return fmt.Errorf("failed to update story: %w", err)
 			}
-
-			// Process items - more complex, would need to handle deletes, updates, etc.
-			// For simplicity, we'll just ensure all items in the message exist
-			for j, itemInfo := range storyInfo.Items {
-				existingItem, err := s.itemRepo.Get(ctx, itemInfo.ID)
-
-				// Parse duration if provided
-				var itemDuration int
-				if itemInfo.Duration != "" {
-					itemDuration, err = strconv.Atoi(itemInfo.Duration)
-					if err != nil {
-						itemDuration = 0
-					}
-				}
-
-				if err != nil { // Item doesn't exist
-					// Create new item
-					item := &model.Item{
-						ID:       itemInfo.ID,
-						StoryID:  storyInfo.ID,
-						Slug:     itemInfo.Slug,
-						Duration: itemDuration,
-						ObjectID: itemInfo.ObjectID,
-						Status:   model.StatusPending,
-						Order:    j + 1,
-					}
-
-					_, err = s.itemRepo.Create(ctx, item)
-					if err != nil {
-						return fmt.Errorf("failed to create item: %w", err)
-					}
-				} else {
-					// Update existing item
-					existingItem.Slug = itemInfo.Slug
-					existingItem.Duration = itemDuration
-					existingItem.ObjectID = itemInfo.ObjectID
-					existingItem.Order = j + 1
-					existingItem.UpdatedAt = time.Now()
-
-					err = s.itemRepo.Update(ctx, existingItem)
-					if err != nil {
-						return fmt.Errorf("failed to update item: %w", err)
-					}
-				}
-			}
 		}
 	}
 
 	return nil
-}
-
-// CreateMOSObject creates a new MOS object
-func (s *MOSService) CreateMOSObject(ctx context.Context, obj *model.MOSObject) (*model.MOSObject, error) {
-	return s.objectRepo.Create(ctx, obj)
-}
-
-// GetMOSObject retrieves a MOS object by ID
-func (s *MOSService) GetMOSObject(ctx context.Context, id string) (*model.MOSObject, error) {
-	return s.objectRepo.Get(ctx, id)
-}
-
-// UpdateRunningOrderStatus updates the status of a running order
-func (s *MOSService) UpdateRunningOrderStatus(ctx context.Context, id string, status model.StatusType) error {
-	ro, err := s.runningOrderRepo.Get(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	ro.Status = status
-	ro.UpdatedAt = time.Now()
-
-	return s.runningOrderRepo.Update(ctx, ro)
 }

@@ -191,6 +191,8 @@ func (c *ClientConnection) handleMessage(ctx context.Context, message xml.MOSMes
 		err = c.handleRunningOrderInfo(ctx, msg)
 	case xml.MOSAck:
 		err = c.handleMOSAck(ctx, msg)
+	case xml.NCSReqStoryAction:
+		err = c.handleNCSReqStoryAction(ctx, msg)
 	default:
 		err = fmt.Errorf("unknown message type: %T", message)
 	}

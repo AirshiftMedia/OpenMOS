@@ -74,3 +74,16 @@ func CreateRunningOrderInfo(source string, requestID string, id string, slug str
 		Stories:   stories,
 	}
 }
+
+// CreateStoryResponse creates a response to a story creation request
+func CreateStoryResponse(requestID, source, status, description string) ([]byte, error) {
+	ack := MOSAck{
+		RequestID:         requestID,
+		Timestamp:         Now(),
+		Source:            source,
+		Status:            status,
+		StatusDescription: description,
+	}
+
+	return GenerateMessage(ack)
+}
