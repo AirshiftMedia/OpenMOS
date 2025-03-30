@@ -6,14 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 )
 
 // Common errors
 var (
-	ErrInvalidXML      = errors.New("invalid XML format")
-	ErrUnknownMessage  = errors.New("unknown message type")
-	ErrIncompleteXML   = errors.New("incomplete XML data")
+	ErrInvalidXML     = errors.New("invalid XML format")
+	ErrUnknownMessage = errors.New("unknown message type")
+	ErrIncompleteXML  = errors.New("incomplete XML data")
 )
 
 // MessageParser parses XML messages into their corresponding types
@@ -56,21 +55,25 @@ func (p *MessageParser) HasCompleteMessage() bool {
 	if nameEnd == -1 {
 		return false
 	}
-	
+
+	if start+nameEnd >= len(p.buffer) {
+		return false
+	}
+
 	tagName := string(p.buffer[start+1 : start+nameEnd])
-	
+
 	// Check for self-closing tag like <heartbeat/>
 	selfClosingEnd := bytes.Index(p.buffer[start:], []byte("/>"))
 	if selfClosingEnd != -1 {
 		return true
 	}
-	
+
 	// Look for closing tag
 	closingTag := fmt.Sprintf("</%s>", tagName)
 	if bytes.Contains(p.buffer, []byte(closingTag)) {
 		return true
 	}
-	
+
 	return false
 }
 
@@ -79,15 +82,15 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 	if !p.HasCompleteMessage() {
 		return nil, p.buffer, ErrIncompleteXML
 	}
-	
+
 	// Detect the message type based on the root element
 	messageType, err := p.detectMessageType()
 	if err != nil {
 		return nil, p.buffer, err
 	}
-	
+
 	var message MOSMessage
-	
+
 	// Parse based on message type
 	switch messageType {
 	case "heartbeat":
@@ -98,7 +101,7 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		}
 		message = heartbeat
 		p.buffer = remaining
-		
+
 	case "roReq":
 		var roReq ReqRunningOrderList
 		remaining, err := p.parseMessage(&roReq)
@@ -107,7 +110,7 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		}
 		message = roReq
 		p.buffer = remaining
-		
+
 	case "roReqAll":
 		var roReqAll ReqRunningOrder
 		remaining, err := p.parseMessage(&roReqAll)
@@ -116,7 +119,7 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		}
 		message = roReqAll
 		p.buffer = remaining
-		
+
 	case "roList":
 		var roList RunningOrderList
 		remaining, err := p.parseMessage(&roList)
@@ -125,7 +128,7 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		}
 		message = roList
 		p.buffer = remaining
-		
+
 	case "roCreate":
 		var roCreate RunningOrderInfo
 		remaining, err := p.parseMessage(&roCreate)
@@ -134,7 +137,7 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		}
 		message = roCreate
 		p.buffer = remaining
-		
+
 	case "mosAck":
 		var mosAck MOSAck
 		remaining, err := p.parseMessage(&mosAck)
@@ -143,11 +146,11 @@ func (p *MessageParser) Parse() (MOSMessage, []byte, error) {
 		}
 		message = mosAck
 		p.buffer = remaining
-		
+
 	default:
 		return nil, p.buffer, fmt.Errorf("%w: %s", ErrUnknownMessage, messageType)
 	}
-	
+
 	return message, p.buffer, nil
 }
 
@@ -157,12 +160,16 @@ func (p *MessageParser) detectMessageType() (string, error) {
 	if start == -1 {
 		return "", ErrInvalidXML
 	}
-	
+
 	nameEnd := bytes.IndexAny(p.buffer[start:], " \t\n\r/>")
 	if nameEnd == -1 {
 		return "", ErrInvalidXML
 	}
-	
+
+	if start+nameEnd >= len(p.buffer) {
+		return "", ErrInvalidXML
+	}
+
 	tagName := string(p.buffer[start+1 : start+nameEnd])
 	return tagName, nil
 }
@@ -174,10 +181,10 @@ func (p *MessageParser) parseMessage(message interface{}) ([]byte, error) {
 	if err != nil {
 		return p.buffer, err
 	}
-	
+
 	// Find the end of the message
 	var messageEnd int
-	
+
 	// Check for self-closing tag
 	selfClosingEnd := bytes.Index(p.buffer, []byte("/>"))
 	if selfClosingEnd != -1 && bytes.IndexAny(p.buffer[:selfClosingEnd], "<") == bytes.IndexByte(p.buffer, '<') {
@@ -192,18 +199,22 @@ func (p *MessageParser) parseMessage(message interface{}) ([]byte, error) {
 		}
 		messageEnd = closingTagIndex + len(closingTag)
 	}
-	
+
 	// Parse the message
+	if messageEnd > len(p.buffer) {
+		return p.buffer, ErrIncompleteXML
+	}
+
 	err = xml.Unmarshal(p.buffer[:messageEnd], message)
 	if err != nil {
 		return p.buffer, fmt.Errorf("failed to unmarshal XML: %w", err)
 	}
-	
+
 	// Return the remaining data
 	if messageEnd >= len(p.buffer) {
 		return []byte{}, nil
 	}
-	
+
 	return p.buffer[messageEnd:], nil
 }
 
@@ -211,7 +222,7 @@ func (p *MessageParser) parseMessage(message interface{}) ([]byte, error) {
 func ParseMessage(xmlData string) (MOSMessage, error) {
 	parser := NewMessageParser()
 	parser.AppendData([]byte(xmlData))
-	
+
 	message, _, err := parser.Parse()
 	return message, err
 }
@@ -222,5 +233,6 @@ func ParseMessageFromReader(reader io.Reader) (MOSMessage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read data: %w", err)
 	}
-	
+
 	return ParseMessage(string(data))
+}
