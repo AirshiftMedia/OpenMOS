@@ -1,4 +1,4 @@
-# Open Media Object Server
+# OpenMOS Media Object Server
 An implementation of Media Object Server using MOS Protocol 4.0 with WebSocket as a communication method.
 The project will aim at compliance with Profile 7.
 > [!NOTE]
