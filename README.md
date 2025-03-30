@@ -33,7 +33,7 @@ When the maturity level reaches early beta, the project shall make available a D
 ```
 # Application configuration
 app:
-  name: OpenMOS
+  name: mos.station.com
   version: 1.0.0
   environment: development
 
