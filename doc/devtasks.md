@@ -3,7 +3,7 @@
 - [x] Assign license for codebase
 - [x] Create intial docs to communicate project scope
 - [x] Commit server template
-- [ ] Implement core functions and server sockets
+- [x] Implement core functions and server sockets
 
 # Known issues:
 
