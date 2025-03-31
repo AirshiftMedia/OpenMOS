@@ -33,20 +33,34 @@ When the maturity level reaches early beta, the project shall make available a D
 ### Configuration file:
 
 ```
-# Application configuration
 app:
-  name: mos.station.com
-  version: 1.0.0
-  environment: development
-
-# MOS service configuration
+    name: OpenMOS
+    version: 1.0.0
+    environment: development
 server:
-  host: 0.0.0.0
-  port: 10540
-  readTimeout: 5s
-  writeTimeout: 5s
-  shutdownTimeout: 30s
-  ```
+    host: 0.0.0.0
+    port: 10540
+    readtimeout: 5s
+    writetimeout: 5s
+    shutdowntimeout: 30s
+mongo:
+    uri: "mongodb+srv://localhost"
+    database: openmosdb01
+    timeout: 10s
+mos:
+    id: mos01.station.com
+    heartbeatinterval: 30s
+    clienttimeout: 2m0s
+logging:
+    level: info
+sentry:
+    dsn: ""
+    environment: development
+    debug: false
+    attachstacktrace: true
+    samplerate: 1
+    tracessamplerate: 0.2
+```
 
 Generate default configuration file:
 ```
