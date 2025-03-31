@@ -8,15 +8,17 @@ The project will aim at compliance with Profile 7.
 > At initial stages, message attributes differ from the protocol specification due to practical reasons.
 
 Implementation status:
-* [ ]  Core
-* [ ]  Profile 0
-* [ ]  Profile 1
-* [ ]  Profile 2
-* [ ]  Profile 3
-* [ ]  Profile 4
-* [ ]  Profile 5
-* [ ]  Profile 6
-* [ ]  Profile 7
+* [x]  Core
+* [x]  MongoDB Data Repository
+* [x]  Sentry Observability
+* [ ]  Profile 0 - Basic Communication
+* [ ]  Profile 1 - Basic Object Based Workflow
+* [ ]  Profile 2 - Basic Running Order / Content List Workflow
+* [ ]  Profile 3 - Advanced Object Based Workflow
+* [ ]  Profile 4 - Advanced RO/Content List Workflow
+* [ ]  Profile 5 - Item Control
+* [ ]  Profile 6 - MOS Redirection
+* [ ]  Profile 7 - MOS RO/Content List Modification
 
 As an experimental feature, the Profile 5 roCtrl will be implemented in a way that it can support IoT device
 control using MQTT protocol. An example use case is the red light control. In the future this could be expanded to actual machine controls with protocols like Ember+ (https://github.com/Lawo/ember-plus) or VDCP.
