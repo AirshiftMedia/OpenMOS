@@ -4,6 +4,8 @@ This section contains the documentation of the OpenMOS project.
 
 # Table of Contents:
 
+- [Developer Reference](./developer-reference.md) - Architecture, structure, and feature roadmap
+
 - [Development tasks](./devtasks.md)
 
 - [Profiles according to the MOS protocol standard](./profiles.md)
