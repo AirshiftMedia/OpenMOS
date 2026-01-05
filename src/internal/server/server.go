@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"airshift/openmos/internal/config"
+	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/service"
 	"airshift/openmos/pkg/logger"
 )
@@ -19,12 +20,13 @@ type TCPServer struct {
 	clientsMu  sync.RWMutex
 	service    *service.MOSService
 	config     *config.Config
+	eventBus   *events.EventBus
 	wg         sync.WaitGroup
 	shutdownCh chan struct{}
 }
 
 // NewTCPServer creates a new TCP server instance
-func NewTCPServer(cfg *config.Config, mosService *service.MOSService) (*TCPServer, error) {
+func NewTCPServer(cfg *config.Config, mosService *service.MOSService, eventBus *events.EventBus) (*TCPServer, error) {
 	address := cfg.GetServerAddress()
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
@@ -36,6 +38,7 @@ func NewTCPServer(cfg *config.Config, mosService *service.MOSService) (*TCPServe
 		clients:    make(map[string]*ClientConnection),
 		service:    mosService,
 		config:     cfg,
+		eventBus:   eventBus,
 		shutdownCh: make(chan struct{}),
 	}
 

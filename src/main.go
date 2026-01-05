@@ -11,6 +11,7 @@ import (
 
 	"airshift/openmos/internal/config"
 	"airshift/openmos/internal/db"
+	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/repository"
 	"airshift/openmos/internal/server"
 	"airshift/openmos/internal/service"
@@ -123,12 +124,15 @@ func main() {
 	itemRepo := repository.NewMongoItemRepository(database)
 	objectRepo := repository.NewMongoObjectRepository(database)
 
+	// Create event bus for pub-sub messaging
+	eventBus := events.NewEventBus()
+
 	// Create service
-	mosService := service.NewMOSService(runningOrderRepo, storyRepo, itemRepo, objectRepo)
+	mosService := service.NewMOSService(runningOrderRepo, storyRepo, itemRepo, objectRepo, eventBus)
 
 	// Create and start TCP server
 	log.Info("Starting TCP server...")
-	tcpServer, err := server.NewTCPServer(cfg, mosService)
+	tcpServer, err := server.NewTCPServer(cfg, mosService, eventBus)
 	if err != nil {
 		log.CaptureException(err, map[string]string{
 			"component": "server",

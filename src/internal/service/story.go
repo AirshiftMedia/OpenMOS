@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/model"
 	"airshift/openmos/internal/xml"
 	"airshift/openmos/pkg/logger"
@@ -93,6 +94,15 @@ func (s *MOSService) createNewStory(ctx context.Context, storySend xml.ROStorySe
 		return fmt.Errorf("failed to create story: %w", err)
 	}
 
+	// Publish event after successful creation
+	if s.eventBus != nil {
+		s.eventBus.Publish(events.Event{
+			Type:    events.StoryModified,
+			Payload: story.ID,
+			Source:  "mos_service",
+		})
+	}
+
 	logger.Infof("Created new story %s in running order %s", story.ID, ro.ID)
 	return nil
 }
@@ -120,6 +130,15 @@ func (s *MOSService) updateStory(ctx context.Context, storySend xml.ROStorySend)
 	err = s.storyRepo.Update(ctx, story)
 	if err != nil {
 		return fmt.Errorf("failed to update story: %w", err)
+	}
+
+	// Publish event after successful update
+	if s.eventBus != nil {
+		s.eventBus.Publish(events.Event{
+			Type:    events.StoryModified,
+			Payload: story.ID,
+			Source:  "mos_service",
+		})
 	}
 
 	logger.Infof("Updated story %s in running order %s", story.ID, story.RunningOrderID)

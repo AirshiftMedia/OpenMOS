@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/model"
 	"airshift/openmos/internal/repository"
 	"airshift/openmos/internal/xml"
@@ -17,6 +18,7 @@ type MOSService struct {
 	storyRepo        repository.StoryRepository
 	itemRepo         repository.ItemRepository
 	objectRepo       repository.ObjectRepository
+	eventBus         *events.EventBus
 }
 
 // NewMOSService creates a new MOS service
@@ -25,12 +27,14 @@ func NewMOSService(
 	storyRepo repository.StoryRepository,
 	itemRepo repository.ItemRepository,
 	objectRepo repository.ObjectRepository,
+	eventBus *events.EventBus,
 ) *MOSService {
 	return &MOSService{
 		runningOrderRepo: runningOrderRepo,
 		storyRepo:        storyRepo,
 		itemRepo:         itemRepo,
 		objectRepo:       objectRepo,
+		eventBus:         eventBus,
 	}
 }
 
@@ -153,6 +157,15 @@ func (s *MOSService) ProcessRunningOrderInfo(ctx context.Context, roInfo xml.Run
 				return fmt.Errorf("failed to update story: %w", err)
 			}
 		}
+	}
+
+	// Publish event after successful update
+	if s.eventBus != nil {
+		s.eventBus.Publish(events.Event{
+			Type:    events.RunningOrderUpdated,
+			Payload: roInfo.ID,
+			Source:  "mos_service",
+		})
 	}
 
 	return nil
