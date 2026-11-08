@@ -49,6 +49,10 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	if pool := connectDatabase(ctx, cfg, log); pool != nil {
+		defer pool.Close()
+	}
+
 	tcpServer := newTCPServer(cfg, newRepository(log), log)
 
 	// Handle signals for graceful shutdown

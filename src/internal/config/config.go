@@ -23,6 +23,17 @@ type Config struct {
 		ShutdownTimeout time.Duration
 	}
 
+	// PostgreSQL configuration. URL is a secret (it holds the password): set
+	// it with DATABASE_URL or in a local, gitignored config.yaml. Without a
+	// URL, the standard PG* environment variables are used.
+	Postgres struct {
+		URL               string
+		MaxConns          int32
+		MinConns          int32
+		ConnectTimeout    time.Duration
+		HealthCheckPeriod time.Duration
+	}
+
 	// MOS configuration
 	MOS struct {
 		// MOS ID of this server, used in MOS messages

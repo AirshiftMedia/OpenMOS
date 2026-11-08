@@ -28,6 +28,22 @@ func getEnvAsInt(key string, defaultValue int) int {
 	return value
 }
 
+// getEnvAsInt32 parses with a 32-bit limit, so values that do not fit fall
+// back to the default instead of being truncated by a conversion.
+func getEnvAsInt32(key string, defaultValue int32) int32 {
+	valueStr := getEnv(key, "")
+	if valueStr == "" {
+		return defaultValue
+	}
+
+	value, err := strconv.ParseInt(valueStr, 10, 32)
+	if err != nil {
+		return defaultValue
+	}
+
+	return int32(value)
+}
+
 func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
 	valueStr := getEnv(key, "")
 	if valueStr == "" {
@@ -79,6 +95,13 @@ func getDefaultString(current, defaultValue string) string {
 }
 
 func getDefaultInt(current, defaultValue int) int {
+	if current == 0 {
+		return defaultValue
+	}
+	return current
+}
+
+func getDefaultInt32(current, defaultValue int32) int32 {
 	if current == 0 {
 		return defaultValue
 	}

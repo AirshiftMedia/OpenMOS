@@ -19,6 +19,13 @@ func GenerateDefaultConfig(filePath string) error {
 	config.Server.WriteTimeout = 5 * time.Second
 	config.Server.ShutdownTimeout = 30 * time.Second
 
+	// PostgreSQL config. The URL stays empty: it is a secret and belongs in
+	// DATABASE_URL, not in a generated file.
+	config.Postgres.MaxConns = 10
+	config.Postgres.MinConns = 1
+	config.Postgres.ConnectTimeout = 5 * time.Second
+	config.Postgres.HealthCheckPeriod = 30 * time.Second
+
 	// MOS config
 	config.MOS.ID = "OpenMOS_Server"
 	config.MOS.HeartbeatInterval = 30 * time.Second
