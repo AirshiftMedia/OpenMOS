@@ -46,7 +46,7 @@ func (r *MongoRunningOrderRepository) Create(ctx context.Context, ro *model.Runn
 		return nil, fmt.Errorf("failed to check running order ID uniqueness: %w", err)
 	}
 	if count > 0 {
-		return nil, fmt.Errorf("running order with ID %s already exists", ro.ID)
+		return nil, fmt.Errorf("running order %s: %w", ro.ID, ErrAlreadyExists)
 	}
 
 	_, err = r.collection.InsertOne(ctx, ro)
@@ -63,7 +63,7 @@ func (r *MongoRunningOrderRepository) Get(ctx context.Context, id string) (*mode
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&ro)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, fmt.Errorf("running order not found: %s", id)
+			return nil, fmt.Errorf("running order %s: %w", id, ErrNotFound)
 		}
 		return nil, fmt.Errorf("failed to get running order: %w", err)
 	}
@@ -72,24 +72,24 @@ func (r *MongoRunningOrderRepository) Get(ctx context.Context, id string) (*mode
 
 // Update updates a running order
 func (r *MongoRunningOrderRepository) Update(ctx context.Context, ro *model.RunningOrder) error {
-	now := time.Now()
-	ro.UpdatedAt = now
-	ro.Version++
-
-	// Get current document to check version
+	// Get current document to check version. This read-then-replace is not
+	// atomic; MOS-15 replaces it with a version-checked write.
 	var current model.RunningOrder
 	err := r.collection.FindOne(ctx, bson.M{"_id": ro.ID}).Decode(&current)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return fmt.Errorf("running order not found: %s", ro.ID)
+			return fmt.Errorf("running order %s: %w", ro.ID, ErrNotFound)
 		}
 		return fmt.Errorf("failed to get current running order: %w", err)
 	}
 
 	// Optimistic concurrency control
-	if ro.Version <= current.Version {
-		return fmt.Errorf("running order version conflict: expected > %d, got %d", current.Version, ro.Version)
+	if ro.Version != current.Version {
+		return fmt.Errorf("running order %s at version %d, update based on %d: %w",
+			ro.ID, current.Version, ro.Version, ErrVersionConflict)
 	}
+	ro.Version++
+	ro.UpdatedAt = time.Now()
 
 	filter := bson.M{"_id": ro.ID}
 	_, err = r.collection.ReplaceOne(ctx, filter, ro)
@@ -108,7 +108,7 @@ func (r *MongoRunningOrderRepository) Delete(ctx context.Context, id string) err
 	}
 
 	if result.DeletedCount == 0 {
-		return fmt.Errorf("running order not found: %s", id)
+		return fmt.Errorf("running order %s: %w", id, ErrNotFound)
 	}
 
 	return nil

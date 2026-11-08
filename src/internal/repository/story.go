@@ -45,7 +45,7 @@ func (r *MongoStoryRepository) Create(ctx context.Context, story *model.Story) (
 		return nil, fmt.Errorf("failed to check story ID uniqueness: %w", err)
 	}
 	if count > 0 {
-		return nil, fmt.Errorf("story with ID %s already exists", story.ID)
+		return nil, fmt.Errorf("story %s: %w", story.ID, ErrAlreadyExists)
 	}
 
 	_, err = r.collection.InsertOne(ctx, story)
@@ -62,7 +62,7 @@ func (r *MongoStoryRepository) Get(ctx context.Context, id string) (*model.Story
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&story)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, fmt.Errorf("story not found: %s", id)
+			return nil, fmt.Errorf("story %s: %w", id, ErrNotFound)
 		}
 		return nil, fmt.Errorf("failed to get story: %w", err)
 	}
@@ -75,9 +75,12 @@ func (r *MongoStoryRepository) Update(ctx context.Context, story *model.Story) e
 	story.UpdatedAt = now
 
 	filter := bson.M{"_id": story.ID}
-	_, err := r.collection.ReplaceOne(ctx, filter, story)
+	result, err := r.collection.ReplaceOne(ctx, filter, story)
 	if err != nil {
 		return fmt.Errorf("failed to update story: %w", err)
+	}
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("story %s: %w", story.ID, ErrNotFound)
 	}
 
 	return nil
@@ -91,7 +94,7 @@ func (r *MongoStoryRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	if result.DeletedCount == 0 {
-		return fmt.Errorf("story not found: %s", id)
+		return fmt.Errorf("story %s: %w", id, ErrNotFound)
 	}
 
 	return nil
