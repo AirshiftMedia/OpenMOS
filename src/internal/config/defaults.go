@@ -19,11 +19,6 @@ func GenerateDefaultConfig(filePath string) error {
 	config.Server.WriteTimeout = 5 * time.Second
 	config.Server.ShutdownTimeout = 30 * time.Second
 
-	// MongoDB config
-	config.Mongo.URI = "mongodb://localhost:27017"
-	config.Mongo.Database = "openmos"
-	config.Mongo.Timeout = 10 * time.Second
-
 	// MOS config
 	config.MOS.ID = "OpenMOS_Server"
 	config.MOS.HeartbeatInterval = 30 * time.Second

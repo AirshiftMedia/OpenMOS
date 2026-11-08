@@ -33,17 +33,6 @@ func applyEnvOverrides(config *Config, yamlLoaded bool) {
 		config.Server.ShutdownTimeout = getEnvAsDuration("SERVER_SHUTDOWN_TIMEOUT", getDefaultDuration(config.Server.ShutdownTimeout, 30*time.Second))
 	}
 
-	// MongoDB config
-	if envVal := getEnv("MONGODB_URI", ""); envVal != "" || !yamlLoaded {
-		config.Mongo.URI = getEnv("MONGODB_URI", getDefaultString(config.Mongo.URI, "mongodb://localhost:27017"))
-	}
-	if envVal := getEnv("MONGODB_DATABASE", ""); envVal != "" || !yamlLoaded {
-		config.Mongo.Database = getEnv("MONGODB_DATABASE", getDefaultString(config.Mongo.Database, "openmos"))
-	}
-	if envVal := getEnv("MONGODB_TIMEOUT", ""); envVal != "" || !yamlLoaded {
-		config.Mongo.Timeout = getEnvAsDuration("MONGODB_TIMEOUT", getDefaultDuration(config.Mongo.Timeout, 10*time.Second))
-	}
-
 	// MOS config
 	if envVal := getEnv("MOS_ID", ""); envVal != "" || !yamlLoaded {
 		config.MOS.ID = getEnv("MOS_ID", getDefaultString(config.MOS.ID, "OpenMOS_Server"))

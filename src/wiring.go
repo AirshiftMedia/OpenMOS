@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"airshift/openmos/internal/config"
-	"airshift/openmos/internal/db"
 	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/repository"
+	"airshift/openmos/internal/repository/memory"
 	"airshift/openmos/internal/server"
 	"airshift/openmos/internal/service"
 	"airshift/openmos/pkg/logger"
@@ -15,35 +15,22 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
-// connectDatabase connects to MongoDB and exits the process on failure.
-func connectDatabase(cfg *config.Config, log *logger.SentryLogger) *db.MongoDB {
-	log.Info("Connecting to MongoDB...")
-	database, err := db.NewMongoDB(cfg)
-	if err != nil {
-		// Capture the error in Sentry and then log and exit
-		log.CaptureException(err, map[string]string{
-			"component": "database",
-			"action":    "connect",
-		}, nil)
-		log.Fatalf("Failed to connect to MongoDB: %v", err)
-	}
-	return database
+// newRepository returns the storage the server runs on. Until the PostgreSQL
+// store lands (MOS-14, wired in MOS-16) this is the in-memory store, so all
+// data is lost on restart.
+func newRepository(log *logger.SentryLogger) repository.Repository {
+	log.Warning("Using in-memory storage: data is not persisted")
+	return memory.New()
 }
 
 // newTCPServer wires repositories, the event bus and the MOS service into a
 // TCP server, and exits the process if the server cannot be created.
-func newTCPServer(cfg *config.Config, database *db.MongoDB, log *logger.SentryLogger) *server.TCPServer {
-	// Create repositories
-	runningOrderRepo := repository.NewMongoRunningOrderRepository(database)
-	storyRepo := repository.NewMongoStoryRepository(database)
-	itemRepo := repository.NewMongoItemRepository(database)
-	objectRepo := repository.NewMongoObjectRepository(database)
-
+func newTCPServer(cfg *config.Config, repo repository.Repository, log *logger.SentryLogger) *server.TCPServer {
 	// Create event bus for pub-sub messaging
 	eventBus := events.NewEventBus()
 
 	// Create service
-	mosService := service.NewMOSService(runningOrderRepo, storyRepo, itemRepo, objectRepo, eventBus)
+	mosService := service.NewMOSService(repo.RunningOrders(), repo.Stories(), repo.Items(), repo.Objects(), eventBus)
 
 	// Create and start TCP server
 	log.Info("Starting TCP server...")

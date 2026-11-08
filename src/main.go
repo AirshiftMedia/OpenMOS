@@ -49,14 +49,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	database := connectDatabase(cfg, log)
-	defer func() {
-		if err := database.Close(context.Background()); err != nil {
-			log.Errorf("Error disconnecting from MongoDB: %v", err)
-		}
-	}()
-
-	tcpServer := newTCPServer(cfg, database, log)
+	tcpServer := newTCPServer(cfg, newRepository(log), log)
 
 	// Handle signals for graceful shutdown
 	sigCh := make(chan os.Signal, 1)

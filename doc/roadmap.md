@@ -24,7 +24,7 @@ Status as of 2026-11-08 (commit `3a73754`).
 Milestones run in order; each one builds on the previous.
 
 1. **M1 Foundations and PostgreSQL.** Build passes for the whole module, CI runs
-   build, vet and tests, and storage moves from MongoDB to PostgreSQL.
+   build, vet and tests, and storage moves to PostgreSQL.
    See [database-migration.md](./database-migration.md).
 2. **M2 Wire protocol and Profile 0.** Messages use the `<mos>` envelope
    (`mosID`, `ncsID`, `messageID`), UTF-16BE encoding, robust stream framing,
