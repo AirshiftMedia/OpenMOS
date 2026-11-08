@@ -70,11 +70,7 @@ func (p *MessageParser) HasCompleteMessage() bool {
 
 	// Look for closing tag
 	closingTag := fmt.Sprintf("</%s>", tagName)
-	if bytes.Contains(p.buffer, []byte(closingTag)) {
-		return true
-	}
-
-	return false
+	return bytes.Contains(p.buffer, []byte(closingTag))
 }
 
 // Parse attempts to parse the buffer into a MOS message

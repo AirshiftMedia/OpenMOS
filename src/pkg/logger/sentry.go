@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -34,7 +35,7 @@ func DefaultSentryConfig() SentryConfig {
 // InitializeSentry initializes the Sentry client
 func InitializeSentry(config SentryConfig) error {
 	if config.DSN == "" {
-		return fmt.Errorf("Sentry DSN is required")
+		return errors.New("sentry DSN is required")
 	}
 
 	err := sentry.Init(sentry.ClientOptions{
@@ -81,7 +82,7 @@ func (l *SentryLogger) CaptureException(err error, tags map[string]string, extra
 	l.Error(err)
 
 	// Add tags
-	if tags != nil && len(tags) > 0 {
+	if len(tags) > 0 {
 		sentry.WithScope(func(scope *sentry.Scope) {
 			// Add tags
 			for k, v := range tags {
@@ -89,7 +90,7 @@ func (l *SentryLogger) CaptureException(err error, tags map[string]string, extra
 			}
 
 			// Add extra context
-			if extras != nil && len(extras) > 0 {
+			if len(extras) > 0 {
 				for k, v := range extras {
 					scope.SetExtra(k, v)
 				}
@@ -134,14 +135,14 @@ func (l *SentryLogger) CaptureMessage(message string, level sentry.Level, tags m
 		scope.SetLevel(level)
 
 		// Add tags
-		if tags != nil && len(tags) > 0 {
+		if len(tags) > 0 {
 			for k, v := range tags {
 				scope.SetTag(k, v)
 			}
 		}
 
 		// Add extra context
-		if extras != nil && len(extras) > 0 {
+		if len(extras) > 0 {
 			for k, v := range extras {
 				scope.SetExtra(k, v)
 			}
