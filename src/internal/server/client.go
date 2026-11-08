@@ -66,6 +66,9 @@ func (c *ClientConnection) Start(ctx context.Context) {
 	// Subscribe to relevant events if event bus is available
 	if c.server.eventBus != nil {
 		roEvents := c.server.eventBus.Subscribe(events.RunningOrderUpdated, 10)
+		// Start returns on every close path (EOF, read error, Close via
+		// heartbeat timeout, context cancel), so this releases the subscription.
+		defer c.server.eventBus.Unsubscribe(events.RunningOrderUpdated, roEvents)
 
 		go func() {
 			for {
