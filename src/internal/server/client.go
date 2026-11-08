@@ -31,7 +31,7 @@ type ClientConnection struct {
 
 // NewClientConnection creates a new client connection
 func NewClientConnection(conn net.Conn, server *TCPServer, cfg *config.Config) *ClientConnection {
-	clientID := fmt.Sprintf("%s", conn.RemoteAddr())
+	clientID := conn.RemoteAddr().String()
 
 	client := &ClientConnection{
 		conn:      conn,
