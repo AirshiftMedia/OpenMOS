@@ -11,9 +11,9 @@ import (
 // recreate the openmos schema in it, so never point it at real data.
 const testDBEnv = "OPENMOS_TEST_DATABASE_URL"
 
-// testDB returns a connection to an empty test database, or skips the test
-// if testDBEnv is not set. The openmos schema is dropped before and after.
-func testDB(t *testing.T) *sql.DB {
+// testDatabaseURL returns the test database URL, or skips the test if
+// testDBEnv is not set.
+func testDatabaseURL(t *testing.T) string {
 	t.Helper()
 	url := os.Getenv(testDBEnv)
 	if url == "" {
@@ -24,7 +24,14 @@ func testDB(t *testing.T) *sql.DB {
 		}
 		t.Skipf("%s not set; skipping PostgreSQL test", testDBEnv)
 	}
-	db, err := Open(url)
+	return url
+}
+
+// testDB returns a connection to an empty test database, or skips the test
+// if testDBEnv is not set. The openmos schema is dropped before and after.
+func testDB(t *testing.T) *sql.DB {
+	t.Helper()
+	db, err := Open(testDatabaseURL(t))
 	if err != nil {
 		t.Fatal(err)
 	}

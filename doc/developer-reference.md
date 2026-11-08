@@ -54,7 +54,7 @@ OpenMOS follows a **Clean Layered Architecture** with clear separation of concer
 | **Server** | `internal/server/` | TCP connections, client management, heartbeat monitoring |
 | **Service** | `internal/service/` | Business logic, MOS operations, event publishing |
 | **Repository** | `internal/repository/` | Data access abstraction, CRUD operations |
-| **Store** | `internal/store/postgres/` | PostgreSQL schema migrations (pool and repositories to follow) |
+| **Store** | `internal/store/postgres/` | PostgreSQL connection pool and schema migrations (repositories to follow) |
 | **Model** | `internal/model/` | Domain entities and value objects |
 | **XML** | `internal/xml/` | Message parsing and serialization |
 | **Events** | `internal/events/` | Pub-sub event bus for real-time notifications |
@@ -88,6 +88,7 @@ OpenMOS/
 │   │   │
 │   │   ├── store/postgres/
 │   │   │   ├── migrate.go            # Goose migrations (embedded SQL)
+│   │   │   ├── pool.go               # pgx connection pool, TLS rules
 │   │   │   └── migrations/           # Schema migrations (00001_init.sql, ...)
 │   │   │
 │   │   ├── server/
@@ -282,6 +283,13 @@ server:
     writetimeout: 5s           # Write timeout duration
     shutdowntimeout: 30s       # Graceful shutdown timeout
 
+postgres:
+    url: ""                    # Connection URL; a secret, so use DATABASE_URL instead
+    maxconns: 10               # Pool size (env POSTGRES_MAX_CONNS)
+    minconns: 1                # Connections kept open (env POSTGRES_MIN_CONNS)
+    connecttimeout: 5s         # Connect and startup ping timeout (POSTGRES_CONNECT_TIMEOUT)
+    healthcheckperiod: 30s     # Idle connection health checks (POSTGRES_HEALTH_CHECK_PERIOD)
+
 mos:
     id: mos01.station.com      # MOS server identifier
     heartbeatinterval: 30s     # Heartbeat interval
@@ -298,6 +306,19 @@ sentry:
     samplerate: 1              # Error sampling rate (0.0-1.0)
     tracessamplerate: 0.2      # Performance trace sampling rate
 ```
+
+### Database connection
+
+- `DATABASE_URL` (the backend01 `.env` name) overrides `postgres.url`. With
+  neither set, the standard `PG*` variables (`PGHOST`, `PGUSER`, ...) are used;
+  with nothing set, the server runs without a database.
+- When a database is configured, the server connects and pings it at startup
+  and exits if that fails. Logs and errors name host, database and user, never
+  the password.
+- Outside `app.environment: development`, connections must use
+  `sslmode=verify-full` with `sslrootcert` pointing at the server CA (on the
+  server, `/secrets/aiven-ca.pem`). Connect to Aiven directly, not through
+  its PgBouncer pool.
 
 ## Development Guidelines
 
@@ -323,8 +344,7 @@ sentry:
   They drop and recreate the `openmos` schema, so never point it at real data:
 
   ```bash
-  docker run -d --name openmos-pg -p 127.0.0.1:5432:5432 \
-    -e POSTGRES_USER=openmos -e POSTGRES_PASSWORD=openmos -e POSTGRES_DB=openmos_test postgres:17
+  docker compose up -d   # from the repository root; also creates openmos_test
   export OPENMOS_TEST_DATABASE_URL='postgres://openmos:openmos@localhost:5432/openmos_test?sslmode=disable'
   go test ./internal/store/...
   ```

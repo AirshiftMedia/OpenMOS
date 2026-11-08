@@ -1,0 +1,28 @@
+# Local PostgreSQL for development and tests only. Production uses Aiven
+# (verify-full TLS, separate roles); see doc/database-migration.md.
+#
+#   docker compose up -d
+#   export DATABASE_URL='postgres://openmos:openmos@localhost:5432/openmos?sslmode=disable'
+#   export OPENMOS_TEST_DATABASE_URL='postgres://openmos:openmos@localhost:5432/openmos_test?sslmode=disable'
+#
+# sslmode=disable is accepted only with APP_ENV=development (the default).
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: openmos
+      POSTGRES_PASSWORD: openmos # local only, not a secret
+      POSTGRES_DB: openmos
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./dev/postgres-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "openmos", "-d", "openmos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

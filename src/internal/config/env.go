@@ -33,6 +33,23 @@ func applyEnvOverrides(config *Config, yamlLoaded bool) {
 		config.Server.ShutdownTimeout = getEnvAsDuration("SERVER_SHUTDOWN_TIMEOUT", getDefaultDuration(config.Server.ShutdownTimeout, 30*time.Second))
 	}
 
+	// PostgreSQL config. DATABASE_URL matches the backend01 .env convention.
+	if envVal := getEnv("DATABASE_URL", ""); envVal != "" || !yamlLoaded {
+		config.Postgres.URL = getEnv("DATABASE_URL", config.Postgres.URL)
+	}
+	if envVal := getEnv("POSTGRES_MAX_CONNS", ""); envVal != "" || !yamlLoaded {
+		config.Postgres.MaxConns = int32(getEnvAsInt("POSTGRES_MAX_CONNS", getDefaultInt(int(config.Postgres.MaxConns), 10)))
+	}
+	if envVal := getEnv("POSTGRES_MIN_CONNS", ""); envVal != "" || !yamlLoaded {
+		config.Postgres.MinConns = int32(getEnvAsInt("POSTGRES_MIN_CONNS", getDefaultInt(int(config.Postgres.MinConns), 1)))
+	}
+	if envVal := getEnv("POSTGRES_CONNECT_TIMEOUT", ""); envVal != "" || !yamlLoaded {
+		config.Postgres.ConnectTimeout = getEnvAsDuration("POSTGRES_CONNECT_TIMEOUT", getDefaultDuration(config.Postgres.ConnectTimeout, 5*time.Second))
+	}
+	if envVal := getEnv("POSTGRES_HEALTH_CHECK_PERIOD", ""); envVal != "" || !yamlLoaded {
+		config.Postgres.HealthCheckPeriod = getEnvAsDuration("POSTGRES_HEALTH_CHECK_PERIOD", getDefaultDuration(config.Postgres.HealthCheckPeriod, 30*time.Second))
+	}
+
 	// MOS config
 	if envVal := getEnv("MOS_ID", ""); envVal != "" || !yamlLoaded {
 		config.MOS.ID = getEnv("MOS_ID", getDefaultString(config.MOS.ID, "OpenMOS_Server"))

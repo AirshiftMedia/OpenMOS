@@ -63,6 +63,11 @@ server:
     readtimeout: 5s
     writetimeout: 5s
     shutdowntimeout: 30s
+postgres:                       # url is a secret: prefer the DATABASE_URL env var
+    maxconns: 10
+    minconns: 1
+    connecttimeout: 5s
+    healthcheckperiod: 30s
 mos:
     id: mos01.station.com
     heartbeatinterval: 30s
@@ -106,7 +111,7 @@ go build -o openmos
 ## Requirements
 
 - Go 1.25 or later
-- PostgreSQL 17 (once the PostgreSQL store lands; until then no database is needed)
+- PostgreSQL 17, optional until the PostgreSQL store is wired in (MOS-16). For local development, `docker compose up -d` starts one (see `docker-compose.yml`)
 - Network access on port 10540 (default MOS port)
 
 ## License
