@@ -11,7 +11,6 @@ var configEnvKeys = []string{
 	"CONFIG_FILE",
 	"APP_NAME", "APP_VERSION", "APP_ENV",
 	"SERVER_HOST", "SERVER_PORT", "SERVER_READ_TIMEOUT", "SERVER_WRITE_TIMEOUT", "SERVER_SHUTDOWN_TIMEOUT",
-	"MONGODB_URI", "MONGODB_DATABASE", "MONGODB_TIMEOUT",
 	"MOS_ID", "MOS_HEARTBEAT_INTERVAL", "MOS_CLIENT_TIMEOUT",
 	"LOG_LEVEL",
 	"SENTRY_DSN", "SENTRY_ENV", "SENTRY_DEBUG", "SENTRY_ATTACH_STACKTRACE",
@@ -48,8 +47,6 @@ func TestLoadConfigDefaultsWithoutYAML(t *testing.T) {
 	want.Server.Host, want.Server.Port = "0.0.0.0", 10540
 	want.Server.ReadTimeout, want.Server.WriteTimeout = 5*time.Second, 5*time.Second
 	want.Server.ShutdownTimeout = 30 * time.Second
-	want.Mongo.URI, want.Mongo.Database = "mongodb://localhost:27017", "openmos"
-	want.Mongo.Timeout = 10 * time.Second
 	want.MOS.ID = "OpenMOS_Server"
 	want.MOS.HeartbeatInterval, want.MOS.ClientTimeout = 30*time.Second, 2*time.Minute
 	want.Logging.Level = "info"

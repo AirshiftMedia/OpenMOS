@@ -8,7 +8,7 @@ This section contains the documentation of the OpenMOS project.
 
 - [Roadmap](./roadmap.md) - Readiness by MOS profile, milestones and known issues
 
-- [Database migration](./database-migration.md) - Plan for moving from MongoDB to PostgreSQL
+- [Database migration](./database-migration.md) - Plan for moving storage to PostgreSQL
 
 - [Development tasks](./devtasks.md)
 

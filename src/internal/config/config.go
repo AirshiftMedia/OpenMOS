@@ -23,13 +23,6 @@ type Config struct {
 		ShutdownTimeout time.Duration
 	}
 
-	// MongoDB configuration
-	Mongo struct {
-		URI      string
-		Database string
-		Timeout  time.Duration
-	}
-
 	// MOS configuration
 	MOS struct {
 		// MOS ID of this server, used in MOS messages

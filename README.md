@@ -12,7 +12,7 @@ Implementation status (2026-11-08):
 * [x]  Core server skeleton and TCP socket server
 * [x]  Sentry observability
 * [x]  Internal event bus for client notifications
-* [ ]  PostgreSQL data repository (replacing MongoDB, see [migration plan](doc/database-migration.md))
+* [ ]  PostgreSQL data repository (in progress; runs on in-memory storage until then, see [migration plan](doc/database-migration.md))
 * [ ]  Profile 0 - Basic Communication (partial)
 * [ ]  Profile 1 - Basic Object Based Workflow
 * [ ]  Profile 2 - Basic Running Order / Content List Workflow (partial)
@@ -28,7 +28,7 @@ The [roadmap](doc/roadmap.md) shows how ready each profile is, the milestones th
 
 OpenMOS implements the MOS protocol using:
 - **TCP Socket Server**: Maintains persistent connections with MOS clients (NCS systems)
-- **PostgreSQL**: Stores running orders, stories, items, and MOS objects (migration from MongoDB in progress, see [database-migration.md](doc/database-migration.md))
+- **PostgreSQL**: Stores running orders, stories, items, and MOS objects (in progress; until it lands the server keeps data in memory only, see [database-migration.md](doc/database-migration.md))
 - **Sentry**: Provides error tracking and performance monitoring
 
 The server handles multiple concurrent client connections, processes MOS XML messages, and manages the lifecycle of running orders and their associated content.
@@ -63,10 +63,6 @@ server:
     readtimeout: 5s
     writetimeout: 5s
     shutdowntimeout: 30s
-mongo:                          # to be replaced by a postgres block
-    uri: "mongodb+srv://localhost"
-    database: openmosdb01
-    timeout: 10s
 mos:
     id: mos01.station.com
     heartbeatinterval: 30s
@@ -109,8 +105,8 @@ go build -o openmos
 
 ## Requirements
 
-- Go 1.24.1 or later
-- MongoDB 4.4 or later (current release; PostgreSQL 17 after the migration)
+- Go 1.25 or later
+- PostgreSQL 17 (once the PostgreSQL store lands; until then no database is needed)
 - Network access on port 10540 (default MOS port)
 
 ## License

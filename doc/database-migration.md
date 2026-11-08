@@ -1,7 +1,9 @@
 # Database migration: MongoDB to PostgreSQL
 
-OpenMOS is replacing MongoDB with PostgreSQL. MongoDB support will be removed,
-not kept alongside, once the PostgreSQL store passes the same tests.
+OpenMOS stores its data in PostgreSQL only. The original MongoDB store was
+removed outright (MOS-34) rather than kept alongside or behind a switch.
+Until the PostgreSQL store lands, the server runs on the in-memory reference
+store (`internal/repository/memory`), so data is not persisted.
 
 ## Why
 
@@ -10,8 +12,8 @@ not kept alongside, once the PostgreSQL store passes the same tests.
 - MOS messages such as `roCreate`, `roReplace` and `roStoryMove` change many
   rows at once and must succeed or fail as a whole, which calls for
   transactions.
-- Only the storage layer (about 480 lines) uses MongoDB today, so switching
-  now is cheaper than after more profiles are built.
+- Only the storage layer (about 480 lines) used MongoDB, so switching early
+  was cheaper than after more profiles were built.
 
 ## Tooling
 
@@ -40,25 +42,25 @@ Tables: `running_orders`, `stories`, `items`, `mos_objects`.
 
 ## Code changes
 
-- `internal/db`: drop the MongoDB client; a new `internal/store/postgres`
+- `internal/db` and the MongoDB repositories are gone; a new `internal/store/postgres`
   package provides the pool, transactions and the four repositories.
-- `internal/repository`: interfaces stay, with composite keys, ordering
-  operations and shared errors (`ErrNotFound`, `ErrVersionConflict`).
+- `internal/repository`: interfaces stay, gaining composite keys and ordering
+  operations. Shared errors live in `errors.go` and grow with each change.
 - Services run each MOS message in one transaction, and running order updates
   use version-checked writes (optimistic locking).
-- Configuration: the `mongo` block becomes a `postgres` block, with
-  `OPENMOS_DATABASE_URL` or the standard `PG*` environment variables.
+- Configuration: the old `mongo` block is gone; a new `postgres` block, with
+  `DATABASE_URL` or the standard `PG*` environment variables.
 - Startup can apply migrations automatically (`--migrate`) or only migrate and
   exit (`--migrate-only`) for deployment jobs.
 
 ## Steps
 
 1. Fix the build, add CI and an implementation-independent repository test
-   suite.
-2. Add the schema migration and the PostgreSQL repositories, passing that
-   suite.
-3. Switch the server to PostgreSQL and add transactions.
-4. Remove the MongoDB code and driver, and update the documentation.
+   suite (MOS-11), with an in-memory reference store.
+2. Remove the MongoDB code, driver and configuration (MOS-34).
+3. Add the schema migration and the PostgreSQL repositories, passing that
+   suite (MOS-12 to MOS-14).
+4. Add transactions and switch the server to PostgreSQL (MOS-15, MOS-16).
 
 <hr />
 

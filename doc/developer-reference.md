@@ -10,11 +10,11 @@ OpenMOS is an implementation of the Media Object Server (MOS) Protocol 4.0 using
 
 | Component | Technology | Version |
 |-----------|------------|---------|
-| Language | Go | 1.24.1+ |
-| Database | MongoDB | 4.4+ |
-| Observability | Sentry | v0.31.1 |
+| Language | Go | 1.25+ |
+| Database | PostgreSQL (in progress; in-memory until then) | 17 |
+| Observability | Sentry | v0.50 |
 | Communication | TCP Sockets | Port 10540 |
-| Configuration | YAML | gopkg.in/yaml.v3 |
+| Configuration | YAML | go.yaml.in/yaml/v3 |
 
 ## Architecture
 
@@ -42,7 +42,7 @@ OpenMOS follows a **Clean Layered Architecture** with clear separation of concer
                           │
 ┌─────────────────────────▼───────────────────────────────────┐
 │                   Database Layer                            │
-│                     (MongoDB)                               │
+│        (PostgreSQL; in-memory store until MOS-16)           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -56,7 +56,6 @@ OpenMOS follows a **Clean Layered Architecture** with clear separation of concer
 | **Repository** | `internal/repository/` | Data access abstraction, CRUD operations |
 | **Model** | `internal/model/` | Domain entities and value objects |
 | **XML** | `internal/xml/` | Message parsing and serialization |
-| **Database** | `internal/db/` | MongoDB connection and collection management |
 | **Events** | `internal/events/` | Pub-sub event bus for real-time notifications |
 | **Utilities** | `pkg/` | Logging, monitoring, shared helpers |
 
@@ -73,10 +72,6 @@ OpenMOS/
 │   │   ├── config/
 │   │   │   └── config.go             # YAML/env configuration loader
 │   │   │
-│   │   ├── db/
-│   │   │   ├── db.go                 # Database interface
-│   │   │   └── mongo.go              # MongoDB implementation
-│   │   │
 │   │   ├── events/
 │   │   │   └── bus.go                # EventBus pub-sub implementation
 │   │   │
@@ -87,10 +82,6 @@ OpenMOS/
 │   │   ├── repository/
 │   │   │   ├── repository.go         # Interface definitions
 │   │   │   ├── errors.go             # Shared errors (ErrNotFound, ...)
-│   │   │   ├── runningorder.go       # RunningOrder MongoDB repo
-│   │   │   ├── story.go              # Story MongoDB repo
-│   │   │   ├── item.go               # Item MongoDB repo
-│   │   │   ├── object.go             # MOSObject MongoDB repo
 │   │   │   ├── memory/               # In-memory reference implementation
 │   │   │   └── repotest/             # Contract suite for every implementation
 │   │   │
@@ -165,7 +156,7 @@ RunningOrder (1) ──► (N) Story ──► (N) Item ──► MOSObject
 2. **Heartbeat Monitoring**: Client heartbeat is tracked; timeout triggers disconnection
 3. **Message Reception**: XML messages are parsed and validated
 4. **Service Processing**: Business logic handles operations (create/update/replace)
-5. **Database Storage**: Changes are persisted to MongoDB
+5. **Storage**: Changes are stored through the repository interfaces (in memory until the PostgreSQL store lands)
 6. **Event Publishing**: Service publishes events to the event bus
 7. **Client Notification**: Connected clients receive real-time updates via subscriptions
 
@@ -173,7 +164,8 @@ RunningOrder (1) ──► (N) Story ──► (N) Item ──► MOSObject
 
 ### Core Infrastructure
 - [x] TCP Socket Server with multi-client support
-- [x] MongoDB data persistence with repository pattern
+- [x] Repository pattern with a contract test suite and an in-memory store
+- [ ] PostgreSQL persistence (M1, see database-migration.md)
 - [x] YAML configuration with environment variable overrides
 - [x] Multi-level logging with Sentry integration
 - [x] Client heartbeat monitoring with timeout detection
@@ -284,11 +276,6 @@ server:
     readtimeout: 5s            # Read timeout duration
     writetimeout: 5s           # Write timeout duration
     shutdowntimeout: 30s       # Graceful shutdown timeout
-
-mongo:
-    uri: "mongodb://localhost" # MongoDB connection URI
-    database: openmosdb01      # Database name
-    timeout: 10s               # Connection timeout
 
 mos:
     id: mos01.station.com      # MOS server identifier
