@@ -1,13 +1,14 @@
 package service
 
 import (
+	"context"
+	"fmt"
+	"time"
+
 	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/model"
 	"airshift/openmos/internal/xml"
 	"airshift/openmos/pkg/logger"
-	"context"
-	"fmt"
-	"time"
 )
 
 // createNewStory creates a new story from the provided ROStorySend

@@ -1,12 +1,13 @@
 package service
 
 import (
-	"airshift/openmos/internal/model"
-	"airshift/openmos/internal/xml"
-	"airshift/openmos/pkg/logger"
 	"context"
 	"fmt"
 	"time"
+
+	"airshift/openmos/internal/model"
+	"airshift/openmos/internal/xml"
+	"airshift/openmos/pkg/logger"
 )
 
 // processStoryBody processes the story body and extracts items

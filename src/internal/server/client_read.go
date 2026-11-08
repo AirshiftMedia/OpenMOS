@@ -1,8 +1,9 @@
 package server
 
 import (
-	"airshift/openmos/internal/xml"
 	"context"
+
+	"airshift/openmos/internal/xml"
 )
 
 // processData appends received bytes to the parser and handles every

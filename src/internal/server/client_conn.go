@@ -1,9 +1,10 @@
 package server
 
 import (
-	"airshift/openmos/pkg/logger"
 	"fmt"
 	"time"
+
+	"airshift/openmos/pkg/logger"
 
 	"github.com/getsentry/sentry-go"
 )

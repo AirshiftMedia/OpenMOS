@@ -1,11 +1,12 @@
 package server
 
 import (
+	"context"
+	"fmt"
+
 	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/xml"
 	"airshift/openmos/pkg/logger"
-	"context"
-	"fmt"
 )
 
 // handleRunningOrderUpdate sends a running order update notification to the client

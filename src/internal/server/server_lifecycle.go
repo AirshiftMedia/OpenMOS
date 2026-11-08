@@ -1,11 +1,12 @@
 package server
 
 import (
-	"airshift/openmos/pkg/logger"
 	"context"
 	"fmt"
 	"net"
 	"time"
+
+	"airshift/openmos/pkg/logger"
 )
 
 // Start begins accepting connections

@@ -1,10 +1,11 @@
 package server
 
 import (
-	"airshift/openmos/internal/xml"
-	"airshift/openmos/pkg/logger"
 	"context"
 	"fmt"
+
+	"airshift/openmos/internal/xml"
+	"airshift/openmos/pkg/logger"
 
 	"github.com/getsentry/sentry-go"
 )
