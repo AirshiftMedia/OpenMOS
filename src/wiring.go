@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	"airshift/openmos/internal/config"
 	"airshift/openmos/internal/db"
@@ -58,15 +59,19 @@ func newTCPServer(cfg *config.Config, database *db.MongoDB, log *logger.SentryLo
 }
 
 // startServer runs the TCP server in a goroutine inside a Sentry
-// transaction; a server error cancels the application context.
+// transaction; a server error cancels the application context. The returned
+// channel is closed once the server has stopped, including its shutdown.
 func startServer(ctx context.Context, cancel context.CancelFunc, cfg *config.Config,
-	tcpServer *server.TCPServer, log *logger.SentryLogger) {
+	tcpServer *server.TCPServer, log *logger.SentryLogger) <-chan struct{} {
 	// Start server monitoring
 	serverSpan := log.StartTransaction("server_lifecycle", "server")
 	serverSpan.SetTag("server_address", cfg.GetServerAddress())
 
+	done := make(chan struct{})
+
 	// Start server in a goroutine
 	go func() {
+		defer close(done)
 		defer serverSpan.Finish()
 
 		if err := tcpServer.Start(ctx); err != nil {
@@ -82,4 +87,16 @@ func startServer(ctx context.Context, cancel context.CancelFunc, cfg *config.Con
 			cancel()
 		}
 	}()
+
+	return done
+}
+
+// waitForServer waits for the server to finish shutting down. Shutdown is
+// bounded by ShutdownTimeout; the extra grace only guards against a hang.
+func waitForServer(done <-chan struct{}, cfg *config.Config, log *logger.SentryLogger) {
+	select {
+	case <-done:
+	case <-time.After(cfg.Server.ShutdownTimeout + 5*time.Second):
+		log.Errorf("Server did not stop within %v, exiting anyway", cfg.Server.ShutdownTimeout)
+	}
 }

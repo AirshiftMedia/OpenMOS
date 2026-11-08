@@ -3,67 +3,39 @@ package server
 import (
 	"context"
 	"fmt"
-	"net"
-	"time"
 
 	"airshift/openmos/pkg/logger"
 )
 
-// Start begins accepting connections
+// Start accepts connections until ctx is cancelled, then shuts the server
+// down and returns the result of Shutdown.
 func (s *TCPServer) Start(ctx context.Context) error {
-	defer s.wg.Done()
-	s.wg.Add(1)
-
 	address := s.listener.Addr().String()
 	logger.Infof("Server listening on %s", address)
 
-	// Accept connections in a loop
+	// Accept connections in a loop. Start itself is not counted in the wait
+	// group, because Shutdown below waits on it.
+	s.wg.Add(1)
 	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-s.shutdownCh:
-				return
-			default:
-				// Set accept timeout so we can check for shutdown
-				tcpListener, ok := s.listener.(*net.TCPListener)
-				if ok {
-					tcpListener.SetDeadline(time.Now().Add(time.Second))
-				}
-
-				conn, err := s.listener.Accept()
-				if err != nil {
-					if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
-						// This is just a timeout from our deadline, continue
-						continue
-					}
-					logger.Errorf("Error accepting connection: %v", err)
-					continue
-				}
-
-				// Create new client connection
-				client := NewClientConnection(conn, s, s.config)
-
-				// Register client
-				s.registerClient(client)
-
-				// Handle client in a goroutine
-				s.wg.Add(1)
-				go func() {
-					defer s.wg.Done()
-					client.Start(ctx)
-				}()
-			}
-		}
+		defer s.wg.Done()
+		s.acceptLoop(ctx)
 	}()
 
 	<-ctx.Done()
 	return s.Shutdown(context.Background())
 }
 
-// Shutdown gracefully shuts down the server
+// Shutdown gracefully shuts down the server: it stops accepting, closes all
+// client connections and waits for their goroutines. It is safe to call more
+// than once; later calls return the first call's result.
 func (s *TCPServer) Shutdown(ctx context.Context) error {
+	s.shutdownOnce.Do(func() {
+		s.shutdownErr = s.shutdown(ctx)
+	})
+	return s.shutdownErr
+}
+
+func (s *TCPServer) shutdown(ctx context.Context) error {
 	logger.Info("Shutting down server...")
 
 	// Signal all goroutines to stop
@@ -74,12 +46,18 @@ func (s *TCPServer) Shutdown(ctx context.Context) error {
 		s.listener.Close()
 	}
 
-	// Close all client connections
-	s.clientsMu.Lock()
+	// Close all client connections. Copy them first: Close unregisters the
+	// client, which takes clientsMu, so it must not be called under the lock.
+	s.clientsMu.RLock()
+	clients := make([]*ClientConnection, 0, len(s.clients))
 	for _, client := range s.clients {
+		clients = append(clients, client)
+	}
+	s.clientsMu.RUnlock()
+
+	for _, client := range clients {
 		client.Close()
 	}
-	s.clientsMu.Unlock()
 
 	// Wait for all goroutines to finish with a timeout
 	shutdownCtx, cancel := context.WithTimeout(ctx, s.config.Server.ShutdownTimeout)
