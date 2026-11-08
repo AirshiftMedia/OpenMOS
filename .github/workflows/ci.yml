@@ -21,6 +21,24 @@ jobs:
   go:
     name: Build, vet, test, staticcheck
     runs-on: ubuntu-latest
+    # Throwaway PostgreSQL for the store tests; they skip without
+    # OPENMOS_TEST_DATABASE_URL locally, but must run here.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: openmos
+          POSTGRES_PASSWORD: openmos
+          POSTGRES_DB: openmos_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U openmos -d openmos_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      OPENMOS_TEST_DATABASE_URL: postgres://openmos:openmos@localhost:5432/openmos_test?sslmode=disable
     steps:
       - uses: actions/checkout@v5
 
