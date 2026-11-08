@@ -89,11 +89,9 @@ func (l *SentryLogger) CaptureException(err error, tags map[string]string, extra
 				scope.SetTag(k, v)
 			}
 
-			// Add extra context
+			// Extras were removed from sentry-go; send them as one context
 			if len(extras) > 0 {
-				for k, v := range extras {
-					scope.SetExtra(k, v)
-				}
+				scope.SetContext("extra", sentry.Context(extras))
 			}
 
 			// Set environment and release if available
@@ -141,11 +139,9 @@ func (l *SentryLogger) CaptureMessage(message string, level sentry.Level, tags m
 			}
 		}
 
-		// Add extra context
+		// Extras were removed from sentry-go; send them as one context
 		if len(extras) > 0 {
-			for k, v := range extras {
-				scope.SetExtra(k, v)
-			}
+			scope.SetContext("extra", sentry.Context(extras))
 		}
 
 		// Set environment and release if available
