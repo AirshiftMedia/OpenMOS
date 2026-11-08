@@ -18,8 +18,11 @@ type TCPServer struct {
 	service    *service.MOSService
 	config     *config.Config
 	eventBus   *events.EventBus
-	wg         sync.WaitGroup
+	wg         sync.WaitGroup // accept loop and client goroutines
 	shutdownCh chan struct{}
+
+	shutdownOnce sync.Once
+	shutdownErr  error
 }
 
 // NewTCPServer creates a new TCP server instance

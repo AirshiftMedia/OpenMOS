@@ -62,7 +62,7 @@ func main() {
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
-	startServer(ctx, cancel, cfg, tcpServer, log)
+	serverDone := startServer(ctx, cancel, cfg, tcpServer, log)
 
 	log.Infof("OpenMOS server is running on %s", cfg.GetServerAddress())
 
@@ -70,8 +70,10 @@ func main() {
 	sig := <-sigCh
 	log.Infof("Received signal: %v", sig)
 
-	// Cancel the server context to start the graceful shutdown
+	// Cancel the server context to start the graceful shutdown, and wait for
+	// it so clients are closed before the process exits
 	cancel()
+	waitForServer(serverDone, cfg, log)
 
 	// Flush Sentry events before exiting
 	defer sentry.Flush(2 * time.Second)
