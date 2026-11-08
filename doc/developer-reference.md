@@ -54,6 +54,7 @@ OpenMOS follows a **Clean Layered Architecture** with clear separation of concer
 | **Server** | `internal/server/` | TCP connections, client management, heartbeat monitoring |
 | **Service** | `internal/service/` | Business logic, MOS operations, event publishing |
 | **Repository** | `internal/repository/` | Data access abstraction, CRUD operations |
+| **Store** | `internal/store/postgres/` | PostgreSQL schema migrations (pool and repositories to follow) |
 | **Model** | `internal/model/` | Domain entities and value objects |
 | **XML** | `internal/xml/` | Message parsing and serialization |
 | **Events** | `internal/events/` | Pub-sub event bus for real-time notifications |
@@ -84,6 +85,10 @@ OpenMOS/
 │   │   │   ├── errors.go             # Shared errors (ErrNotFound, ...)
 │   │   │   ├── memory/               # In-memory reference implementation
 │   │   │   └── repotest/             # Contract suite for every implementation
+│   │   │
+│   │   ├── store/postgres/
+│   │   │   ├── migrate.go            # Goose migrations (embedded SQL)
+│   │   │   └── migrations/           # Schema migrations (00001_init.sql, ...)
 │   │   │
 │   │   ├── server/
 │   │   │   ├── server.go             # TCPServer main logic
@@ -313,6 +318,25 @@ sentry:
   call `repotest.Run` from its tests (see `repository/memory`)
 - Use interfaces to enable mocking
 - Test XML parsing with example messages from `/res/`
+- PostgreSQL tests (`internal/store/postgres`) need a throwaway database in
+  `OPENMOS_TEST_DATABASE_URL`; without it they skip locally (CI provides one).
+  They drop and recreate the `openmos` schema, so never point it at real data:
+
+  ```bash
+  docker run -d --name openmos-pg -p 127.0.0.1:5432:5432 \
+    -e POSTGRES_USER=openmos -e POSTGRES_PASSWORD=openmos -e POSTGRES_DB=openmos_test postgres:17
+  export OPENMOS_TEST_DATABASE_URL='postgres://openmos:openmos@localhost:5432/openmos_test?sslmode=disable'
+  go test ./internal/store/...
+  ```
+
+### Schema migrations
+- Migrations are SQL files in `internal/store/postgres/migrations`, embedded
+  in the binary and applied with goose (`postgres.Migrate`). Tables and the
+  goose version table live in the `openmos` schema.
+- Never edit a migration that has been applied anywhere; add a new one.
+- Migrations run as the schema owner (`openmos_migrate` on Aiven) over a
+  direct connection, not a PgBouncer pool. Do not add GRANTs: the runtime
+  role `openmos_app` gets privileges through `ALTER DEFAULT PRIVILEGES`.
 
 ### Contributing
 1. Create a feature branch from main
