@@ -68,19 +68,19 @@ func (s *MOSService) GetItemsForStory(ctx context.Context, storyID string) ([]*m
 // ProcessRunningOrderInfo processes a running order creation/update message
 func (s *MOSService) ProcessRunningOrderInfo(ctx context.Context, roInfo xml.RunningOrderInfo) error {
 	// Check if running order exists
-	existingRO, err := s.runningOrderRepo.Get(ctx, roInfo.ID)
+	existingRO, getErr := s.runningOrderRepo.Get(ctx, roInfo.ID)
 
-	// Parse duration if provided
+	// Parse duration if provided; an unparsable value falls back to 0
 	var duration int
 	if roInfo.Duration != "" {
-		duration, err = strconv.Atoi(roInfo.Duration)
-		if err != nil {
-			duration = 0
+		if d, parseErr := strconv.Atoi(roInfo.Duration); parseErr == nil {
+			duration = d
 		}
 	}
 
 	// Create or update running order
-	if err != nil { // Running order doesn't exist
+	var err error
+	if getErr != nil { // Running order doesn't exist
 		// Create new running order
 		ro := &model.RunningOrder{
 			ID:        roInfo.ID,
