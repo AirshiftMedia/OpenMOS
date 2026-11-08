@@ -53,3 +53,24 @@ func TestGeneratedConfigHasNoDatabaseURL(t *testing.T) {
 		t.Errorf("generated postgres block = %+v, want empty URL and defaults", cfg.Postgres)
 	}
 }
+
+// Pool sizes that do not fit in an int32 fall back to the default instead
+// of wrapping around.
+func TestPostgresConnsOutOfRangeFallBack(t *testing.T) {
+	for _, v := range []string{"2147483648", "99999999999", "-2147483649", "ten"} {
+		isolate(t)
+		t.Setenv("POSTGRES_MAX_CONNS", v)
+		cfg, err := LoadConfig()
+		if err != nil {
+			t.Fatalf("LoadConfig: %v", err)
+		}
+		if cfg.Postgres.MaxConns != 10 {
+			t.Errorf("POSTGRES_MAX_CONNS=%s: MaxConns = %d, want default 10", v, cfg.Postgres.MaxConns)
+		}
+	}
+	isolate(t)
+	t.Setenv("POSTGRES_MAX_CONNS", "2147483647")
+	if cfg, err := LoadConfig(); err != nil || cfg.Postgres.MaxConns != 2147483647 {
+		t.Errorf("largest int32 not accepted: %v, %v", cfg.Postgres.MaxConns, err)
+	}
+}

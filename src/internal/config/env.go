@@ -38,10 +38,10 @@ func applyEnvOverrides(config *Config, yamlLoaded bool) {
 		config.Postgres.URL = getEnv("DATABASE_URL", config.Postgres.URL)
 	}
 	if envVal := getEnv("POSTGRES_MAX_CONNS", ""); envVal != "" || !yamlLoaded {
-		config.Postgres.MaxConns = int32(getEnvAsInt("POSTGRES_MAX_CONNS", getDefaultInt(int(config.Postgres.MaxConns), 10)))
+		config.Postgres.MaxConns = getEnvAsInt32("POSTGRES_MAX_CONNS", getDefaultInt32(config.Postgres.MaxConns, 10))
 	}
 	if envVal := getEnv("POSTGRES_MIN_CONNS", ""); envVal != "" || !yamlLoaded {
-		config.Postgres.MinConns = int32(getEnvAsInt("POSTGRES_MIN_CONNS", getDefaultInt(int(config.Postgres.MinConns), 1)))
+		config.Postgres.MinConns = getEnvAsInt32("POSTGRES_MIN_CONNS", getDefaultInt32(config.Postgres.MinConns, 1))
 	}
 	if envVal := getEnv("POSTGRES_CONNECT_TIMEOUT", ""); envVal != "" || !yamlLoaded {
 		config.Postgres.ConnectTimeout = getEnvAsDuration("POSTGRES_CONNECT_TIMEOUT", getDefaultDuration(config.Postgres.ConnectTimeout, 5*time.Second))

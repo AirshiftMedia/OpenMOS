@@ -54,6 +54,12 @@ func TestParsePoolConfigDefaults(t *testing.T) {
 		MaxConns: 2, MinConns: 3}); err == nil {
 		t.Error("min conns above max conns accepted")
 	}
+	for _, o := range []PoolOptions{{MaxConns: -1}, {MinConns: -1}} {
+		o.URL = "postgres://u@db.example/openmos?sslmode=verify-full"
+		if _, err := ParsePoolConfig(o); err == nil {
+			t.Errorf("negative conns accepted: max %d, min %d", o.MaxConns, o.MinConns)
+		}
+	}
 }
 
 func TestParsePoolConfigRequiresVerifyFull(t *testing.T) {

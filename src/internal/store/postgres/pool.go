@@ -63,6 +63,10 @@ func ParsePoolConfig(opts PoolOptions) (*pgxpool.Config, error) {
 		return nil, errInvalidSettings
 	}
 
+	if opts.MaxConns < 0 || opts.MinConns < 0 {
+		return nil, fmt.Errorf("PostgreSQL max conns (%d) and min conns (%d) must not be negative",
+			opts.MaxConns, opts.MinConns)
+	}
 	cfg.MaxConns = valueOr(opts.MaxConns, DefaultMaxConns)
 	cfg.MinConns = valueOr(opts.MinConns, DefaultMinConns)
 	if cfg.MinConns > cfg.MaxConns {
