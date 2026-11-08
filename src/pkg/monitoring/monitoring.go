@@ -24,8 +24,8 @@ func StartOperation(ctx context.Context, name, operation string) (*MonitoredOper
 	span := sentry.StartSpan(ctx, operation)
 	span.SetTag("transaction", name)
 
-	// Create a new context with the span
-	newCtx := sentry.SetSpanContext(ctx, span)
+	// The span's context carries the span, so child spans nest under it
+	newCtx := span.Context()
 
 	return &MonitoredOperation{
 		span:      span,
