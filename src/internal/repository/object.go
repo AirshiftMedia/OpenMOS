@@ -45,7 +45,7 @@ func (r *MongoObjectRepository) Create(ctx context.Context, obj *model.MOSObject
 		return nil, fmt.Errorf("failed to check object ID uniqueness: %w", err)
 	}
 	if count > 0 {
-		return nil, fmt.Errorf("object with ID %s already exists", obj.ID)
+		return nil, fmt.Errorf("object %s: %w", obj.ID, ErrAlreadyExists)
 	}
 
 	_, err = r.collection.InsertOne(ctx, obj)
@@ -62,7 +62,7 @@ func (r *MongoObjectRepository) Get(ctx context.Context, id string) (*model.MOSO
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&obj)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, fmt.Errorf("object not found: %s", id)
+			return nil, fmt.Errorf("object %s: %w", id, ErrNotFound)
 		}
 		return nil, fmt.Errorf("failed to get object: %w", err)
 	}
@@ -75,9 +75,12 @@ func (r *MongoObjectRepository) Update(ctx context.Context, obj *model.MOSObject
 	obj.UpdatedAt = now
 
 	filter := bson.M{"_id": obj.ID}
-	_, err := r.collection.ReplaceOne(ctx, filter, obj)
+	result, err := r.collection.ReplaceOne(ctx, filter, obj)
 	if err != nil {
 		return fmt.Errorf("failed to update object: %w", err)
+	}
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("object %s: %w", obj.ID, ErrNotFound)
 	}
 
 	return nil
@@ -91,7 +94,7 @@ func (r *MongoObjectRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	if result.DeletedCount == 0 {
-		return fmt.Errorf("object not found: %s", id)
+		return fmt.Errorf("object %s: %w", id, ErrNotFound)
 	}
 
 	return nil

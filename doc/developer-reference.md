@@ -86,10 +86,13 @@ OpenMOS/
 │   │   │
 │   │   ├── repository/
 │   │   │   ├── repository.go         # Interface definitions
+│   │   │   ├── errors.go             # Shared errors (ErrNotFound, ...)
 │   │   │   ├── runningorder.go       # RunningOrder MongoDB repo
 │   │   │   ├── story.go              # Story MongoDB repo
 │   │   │   ├── item.go               # Item MongoDB repo
-│   │   │   └── object.go             # MOSObject MongoDB repo
+│   │   │   ├── object.go             # MOSObject MongoDB repo
+│   │   │   ├── memory/               # In-memory reference implementation
+│   │   │   └── repotest/             # Contract suite for every implementation
 │   │   │
 │   │   ├── server/
 │   │   │   ├── server.go             # TCPServer main logic
@@ -319,6 +322,8 @@ sentry:
 
 ### Testing
 - Write unit tests for service and repository layers
+- Every repository implementation must pass the contract suite:
+  call `repotest.Run` from its tests (see `repository/memory`)
 - Use interfaces to enable mocking
 - Test XML parsing with example messages from `/res/`
 

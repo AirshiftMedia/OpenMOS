@@ -45,7 +45,7 @@ func (r *MongoItemRepository) Create(ctx context.Context, item *model.Item) (*mo
 		return nil, fmt.Errorf("failed to check item ID uniqueness: %w", err)
 	}
 	if count > 0 {
-		return nil, fmt.Errorf("item with ID %s already exists", item.ID)
+		return nil, fmt.Errorf("item %s: %w", item.ID, ErrAlreadyExists)
 	}
 
 	_, err = r.collection.InsertOne(ctx, item)
@@ -62,7 +62,7 @@ func (r *MongoItemRepository) Get(ctx context.Context, id string) (*model.Item, 
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&item)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, fmt.Errorf("item not found: %s", id)
+			return nil, fmt.Errorf("item %s: %w", id, ErrNotFound)
 		}
 		return nil, fmt.Errorf("failed to get item: %w", err)
 	}
@@ -75,9 +75,12 @@ func (r *MongoItemRepository) Update(ctx context.Context, item *model.Item) erro
 	item.UpdatedAt = now
 
 	filter := bson.M{"_id": item.ID}
-	_, err := r.collection.ReplaceOne(ctx, filter, item)
+	result, err := r.collection.ReplaceOne(ctx, filter, item)
 	if err != nil {
 		return fmt.Errorf("failed to update item: %w", err)
+	}
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("item %s: %w", item.ID, ErrNotFound)
 	}
 
 	return nil
@@ -91,7 +94,7 @@ func (r *MongoItemRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	if result.DeletedCount == 0 {
-		return fmt.Errorf("item not found: %s", id)
+		return fmt.Errorf("item %s: %w", id, ErrNotFound)
 	}
 
 	return nil
