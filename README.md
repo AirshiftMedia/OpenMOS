@@ -8,25 +8,27 @@ The project will aim at compliance with Profile 7.
 > [!NOTE]
 > The MOS protocol specification requires TCP socket connections (default port 10540). At initial stages, message attributes differ from the protocol specification due to practical reasons.
 
-Implementation status:
-* [x]  Core
-* [x]  MongoDB Data Repository
-* [x]  Sentry Observability
-* [x]  TCP Socket Server
-* [ ]  Profile 0 - Basic Communication
+Implementation status (2026-11-08):
+* [x]  Core server skeleton and TCP socket server
+* [x]  Sentry observability
+* [x]  Internal event bus for client notifications
+* [ ]  PostgreSQL data repository (replacing MongoDB, see [migration plan](doc/database-migration.md))
+* [ ]  Profile 0 - Basic Communication (partial)
 * [ ]  Profile 1 - Basic Object Based Workflow
-* [ ]  Profile 2 - Basic Running Order / Content List Workflow
+* [ ]  Profile 2 - Basic Running Order / Content List Workflow (partial)
 * [ ]  Profile 3 - Advanced Object Based Workflow
-* [ ]  Profile 4 - Advanced RO/Content List Workflow
+* [ ]  Profile 4 - Advanced RO/Content List Workflow (partial)
 * [ ]  Profile 5 - Item Control
 * [ ]  Profile 6 - MOS Redirection
 * [ ]  Profile 7 - MOS RO/Content List Modification
+
+The [roadmap](doc/roadmap.md) shows how ready each profile is, the milestones that deliver them, and known issues.
 
 ## Architecture
 
 OpenMOS implements the MOS protocol using:
 - **TCP Socket Server**: Maintains persistent connections with MOS clients (NCS systems)
-- **MongoDB**: Stores running orders, stories, items, and MOS objects
+- **PostgreSQL**: Stores running orders, stories, items, and MOS objects (migration from MongoDB in progress, see [database-migration.md](doc/database-migration.md))
 - **Sentry**: Provides error tracking and performance monitoring
 
 The server handles multiple concurrent client connections, processes MOS XML messages, and manages the lifecycle of running orders and their associated content.
@@ -61,7 +63,7 @@ server:
     readtimeout: 5s
     writetimeout: 5s
     shutdowntimeout: 30s
-mongo:
+mongo:                          # to be replaced by a postgres block
     uri: "mongodb+srv://localhost"
     database: openmosdb01
     timeout: 10s
@@ -108,7 +110,7 @@ go build -o openmos
 ## Requirements
 
 - Go 1.24.1 or later
-- MongoDB 4.4 or later
+- MongoDB 4.4 or later (current release; PostgreSQL 17 after the migration)
 - Network access on port 10540 (default MOS port)
 
 ## License

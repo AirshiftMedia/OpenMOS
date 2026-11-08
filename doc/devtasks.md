@@ -7,7 +7,7 @@
 
 # Known issues:
 
-#None.
+See [Known issues in the roadmap](./roadmap.md#known-issues).
 
 <hr />
 
