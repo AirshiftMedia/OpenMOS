@@ -37,6 +37,9 @@ func applyEnvOverrides(config *Config, yamlLoaded bool) {
 	if envVal := getEnv("DATABASE_URL", ""); envVal != "" || !yamlLoaded {
 		config.Postgres.URL = getEnv("DATABASE_URL", config.Postgres.URL)
 	}
+	if envVal := getEnv("MIGRATE_DATABASE_URL", ""); envVal != "" || !yamlLoaded {
+		config.Postgres.MigrateURL = getEnv("MIGRATE_DATABASE_URL", config.Postgres.MigrateURL)
+	}
 	if envVal := getEnv("POSTGRES_MAX_CONNS", ""); envVal != "" || !yamlLoaded {
 		config.Postgres.MaxConns = getEnvAsInt32("POSTGRES_MAX_CONNS", getDefaultInt32(config.Postgres.MaxConns, 10))
 	}

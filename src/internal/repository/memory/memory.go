@@ -1,7 +1,8 @@
 // Package memory is an in-memory implementation of repository.Repository.
 //
 // It is the reference implementation of the contract in package repotest and
-// a fake for service tests. Nothing is persisted.
+// a fake for service tests. Nothing is persisted, and the server does not
+// use it: it runs on PostgreSQL (internal/store/postgres).
 package memory
 
 import (

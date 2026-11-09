@@ -7,21 +7,12 @@ import (
 	"airshift/openmos/internal/config"
 	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/repository"
-	"airshift/openmos/internal/repository/memory"
 	"airshift/openmos/internal/server"
 	"airshift/openmos/internal/service"
 	"airshift/openmos/pkg/logger"
 
 	"github.com/getsentry/sentry-go"
 )
-
-// newRepository returns the storage the server runs on. Until the PostgreSQL
-// store lands (MOS-14, wired in MOS-16) this is the in-memory store, so all
-// data is lost on restart.
-func newRepository(log *logger.SentryLogger) repository.Repository {
-	log.Warning("Using in-memory storage: data is not persisted")
-	return memory.New()
-}
 
 // newTCPServer wires repositories, the event bus and the MOS service into a
 // TCP server, and exits the process if the server cannot be created.

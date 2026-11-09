@@ -1,5 +1,5 @@
-// Package postgres is the PostgreSQL store: schema migrations now, and the
-// connection pool and repositories as they are added (MOS-13, MOS-14).
+// Package postgres is the PostgreSQL store OpenMOS runs on: the connection
+// pool, schema migrations and the repositories.
 package postgres
 
 import (

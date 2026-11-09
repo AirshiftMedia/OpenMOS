@@ -2,9 +2,9 @@
 
 OpenMOS stores its data in PostgreSQL only. The original MongoDB store was
 removed outright (MOS-34) rather than kept alongside or behind a switch.
-The PostgreSQL repositories exist (`internal/store/postgres`, MOS-14), but
-until the server is switched over (MOS-16) it runs on the in-memory
-reference store (`internal/repository/memory`), so data is not persisted.
+The server runs on the PostgreSQL store (`internal/store/postgres`) since
+MOS-16. The in-memory store (`internal/repository/memory`) remains as the
+reference implementation for tests only.
 
 ## Why
 
@@ -58,7 +58,9 @@ Tables: `running_orders`, `stories`, `items`, `mos_objects`.
 - Configuration: the old `mongo` block is gone; a new `postgres` block, with
   `DATABASE_URL` or the standard `PG*` environment variables.
 - Startup can apply migrations automatically (`--migrate`) or only migrate and
-  exit (`--migrate-only`) for deployment jobs.
+  exit (`--migrate-only`) for deployment jobs. Migrations use
+  `MIGRATE_DATABASE_URL` when set, so they can run as the schema owner over a
+  direct connection. A plain start refuses an outdated schema.
 
 ## Steps
 
@@ -68,6 +70,7 @@ Tables: `running_orders`, `stories`, `items`, `mos_objects`.
 3. Add the schema migration and the PostgreSQL repositories, passing that
    suite (MOS-12 to MOS-14).
 4. Add transactions and switch the server to PostgreSQL (MOS-15, MOS-16).
+5. Provision Aiven and run the first production migration (MOS-31).
 
 <hr />
 
