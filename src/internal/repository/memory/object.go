@@ -17,8 +17,7 @@ func (s objects) Create(_ context.Context, obj *model.MOSObject) (*model.MOSObje
 	if err := repository.CheckID("object", obj.ID); err != nil {
 		return nil, err
 	}
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	k := objectKey{obj.MosID, obj.ID}
 	if _, ok := s.r.objects[k]; ok {
 		return nil, fmt.Errorf("object %s/%s: %w", k.mos, k.obj, repository.ErrAlreadyExists)
@@ -40,8 +39,7 @@ func (s objects) Get(_ context.Context, mosID, objID string) (*model.MOSObject, 
 }
 
 func (s objects) Update(_ context.Context, obj *model.MOSObject) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	k := objectKey{obj.MosID, obj.ID}
 	current, ok := s.r.objects[k]
 	if !ok {
@@ -54,8 +52,7 @@ func (s objects) Update(_ context.Context, obj *model.MOSObject) error {
 }
 
 func (s objects) Delete(_ context.Context, mosID, objID string) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	k := objectKey{mosID, objID}
 	if _, ok := s.r.objects[k]; !ok {
 		return fmt.Errorf("object %s/%s: %w", mosID, objID, repository.ErrNotFound)

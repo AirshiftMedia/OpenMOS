@@ -37,6 +37,15 @@ func (r *Repository) Stories() repository.StoryRepository              { return 
 func (r *Repository) Items() repository.ItemRepository                 { return items{r.db} }
 func (r *Repository) Objects() repository.ObjectRepository             { return objects{r.db} }
 
+// InTx runs fn in a database transaction, committed if fn returns nil.
+// On a repository already bound to a transaction it uses a savepoint.
+// Isolation is READ COMMITTED: fn sees rows others commit meanwhile, while
+// the version check on running orders and the parent locks guard against
+// lost updates.
+func (r *Repository) InTx(ctx context.Context, fn func(repository.Repository) error) error {
+	return pgx.BeginFunc(ctx, r.db, func(tx pgx.Tx) error { return fn(New(tx)) })
+}
+
 // dbError maps a database error to the repository errors, keeping the
 // original in the chain. what names the record, as in "story ro-1/s1".
 func dbError(err error, what string) error {

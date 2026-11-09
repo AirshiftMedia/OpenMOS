@@ -30,7 +30,7 @@ func newTCPServer(cfg *config.Config, repo repository.Repository, log *logger.Se
 	eventBus := events.NewEventBus()
 
 	// Create service
-	mosService := service.NewMOSService(repo.RunningOrders(), repo.Stories(), repo.Items(), repo.Objects(), eventBus)
+	mosService := service.NewMOSService(repo, eventBus)
 
 	// Create and start TCP server
 	log.Info("Starting TCP server...")

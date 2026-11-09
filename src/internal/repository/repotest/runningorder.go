@@ -1,8 +1,10 @@
 package repotest
 
 import (
+	"sync"
 	"testing"
 
+	"airshift/openmos/internal/model"
 	"airshift/openmos/internal/repository"
 )
 
@@ -57,6 +59,47 @@ func testRunningOrders(t *testing.T, newRepo Factory) {
 		must(t, "Get", err)
 		if got.Slug != "first writer" || got.Version != 2 {
 			t.Errorf("after conflict: Slug %q, Version %d; want %q, 2", got.Slug, got.Version, "first writer")
+		}
+	})
+
+	// Writers that read the same version race; exactly one may win, the
+	// rest get ErrVersionConflict
+	t.Run("ConcurrentUpdates", func(t *testing.T) {
+		r, ctx := newRepo(t).RunningOrders(), t.Context()
+		_, err := r.Create(ctx, newRunningOrder("a"))
+		must(t, "Create", err)
+		const n = 10
+		copies := make([]*model.RunningOrder, n)
+		for i := range copies {
+			copies[i], err = r.Get(ctx, "a")
+			must(t, "Get", err)
+			copies[i].Slug = "writer " + itoa(i)
+		}
+		errs := make([]error, n)
+		var wg sync.WaitGroup
+		for i := range copies {
+			wg.Go(func() { errs[i] = r.Update(ctx, copies[i]) })
+		}
+		wg.Wait()
+
+		winner := -1
+		for i, err := range errs {
+			switch {
+			case err == nil && winner < 0:
+				winner = i
+			case err == nil:
+				t.Errorf("writers %d and %d both succeeded", winner, i)
+			default:
+				wantErr(t, "losing writer", err, repository.ErrVersionConflict)
+			}
+		}
+		if winner < 0 {
+			t.Fatal("no writer succeeded")
+		}
+		got, err := r.Get(ctx, "a")
+		must(t, "Get", err)
+		if got.Version != 2 || got.Slug != copies[winner].Slug {
+			t.Errorf("after race: version %d, slug %q; want 2, %q", got.Version, got.Slug, copies[winner].Slug)
 		}
 	})
 

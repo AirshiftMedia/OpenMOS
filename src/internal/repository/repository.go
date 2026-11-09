@@ -29,6 +29,12 @@
 //   - List returns running orders and objects newest first. Listing the
 //     children of an unknown parent returns an empty result, not an error.
 //   - Returned values are copies: changing them does not change stored data.
+//   - InTx runs a function against a transactional view of the repository:
+//     its changes become visible to others only when the function returns
+//     nil, and an error or panic discards all of them. A nested InTx works
+//     like a savepoint. Once an operation inside fn has failed, fn should
+//     return an error; the transaction may not accept more work (PostgreSQL
+//     aborts it). Inside fn, use only the Repository passed to it.
 package repository
 
 import (
@@ -131,8 +137,18 @@ type ObjectRepository interface {
 	List(ctx context.Context) ([]*model.MOSObject, error)
 }
 
+// TxRunner runs work in one transaction.
+type TxRunner interface {
+	// InTx calls fn with a Repository whose changes are committed if fn
+	// returns nil and rolled back if it returns an error or panics. The
+	// error from fn is returned unchanged (wrapped only by commit
+	// failures). The passed Repository must not be used after fn returns.
+	InTx(ctx context.Context, fn func(Repository) error) error
+}
+
 // Repository combines all repositories
 type Repository interface {
+	TxRunner
 	RunningOrders() RunningOrderRepository
 	Stories() StoryRepository
 	Items() ItemRepository

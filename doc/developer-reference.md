@@ -328,6 +328,11 @@ sentry:
 ### Code Organization
 - Keep business logic in the `service` layer
 - Data access should go through `repository` interfaces
+- Handle each MOS message that changes data in one `repo.InTx(ctx, func(tx
+  repository.Repository) error { ... })`, using only `tx` inside it, and
+  publish events after `InTx` returns nil. A stale running order update
+  returns `repository.ErrVersionConflict`; report it to the NCS rather than
+  retrying blindly
 - Models should be pure data structures without behavior
 - Use the event bus for cross-component communication
 
