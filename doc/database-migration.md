@@ -2,8 +2,9 @@
 
 OpenMOS stores its data in PostgreSQL only. The original MongoDB store was
 removed outright (MOS-34) rather than kept alongside or behind a switch.
-Until the PostgreSQL store lands, the server runs on the in-memory reference
-store (`internal/repository/memory`), so data is not persisted.
+The PostgreSQL repositories exist (`internal/store/postgres`, MOS-14), but
+until the server is switched over (MOS-16) it runs on the in-memory
+reference store (`internal/repository/memory`), so data is not persisted.
 
 ## Why
 
@@ -21,7 +22,7 @@ store (`internal/repository/memory`), so data is not persisted.
 | --- | --- | --- |
 | Driver and pool | [pgx v5](https://github.com/jackc/pgx) (`pgxpool`) | Actively maintained, native PostgreSQL types |
 | Migrations | [goose v3](https://github.com/pressly/goose) | Plain SQL files embedded in the binary |
-| Integration tests | [testcontainers-go](https://github.com/testcontainers/testcontainers-go) | Runs a real PostgreSQL in tests and CI |
+| Integration tests | PostgreSQL service container in CI, Docker Compose locally | Tests read `OPENMOS_TEST_DATABASE_URL`; chosen over testcontainers-go to keep Docker out of the test binary |
 | Database | PostgreSQL 17 | Local development via Docker Compose |
 
 ## Schema principles
@@ -45,7 +46,12 @@ Tables: `running_orders`, `stories`, `items`, `mos_objects`.
 - `internal/db` and the MongoDB repositories are gone; a new `internal/store/postgres`
   package provides the pool, transactions and the four repositories.
 - `internal/repository`: interfaces stay, gaining composite keys and ordering
-  operations. Shared errors live in `errors.go` and grow with each change.
+  operations (`Move`, `Swap`, `ReplaceAll`). The ordering rules are shared
+  helpers in `order.go`, so both stores behave alike. Shared errors live in
+  `errors.go` and grow with each change.
+- The PostgreSQL repositories use hand-written pgx queries. Operations that
+  assign positions lock the parent row first, so concurrent appends and moves
+  on one running order or story run one at a time.
 - Services run each MOS message in one transaction, and running order updates
   use version-checked writes (optimistic locking).
 - Configuration: the old `mongo` block is gone; a new `postgres` block, with

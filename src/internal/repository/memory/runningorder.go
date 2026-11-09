@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"airshift/openmos/internal/model"
@@ -12,8 +11,8 @@ import (
 type runningOrders struct{ r *Repository }
 
 func (s runningOrders) Create(_ context.Context, ro *model.RunningOrder) (*model.RunningOrder, error) {
-	if ro.ID == "" {
-		return nil, errors.New("running order ID is required")
+	if err := repository.CheckID("running order", ro.ID); err != nil {
+		return nil, err
 	}
 	s.r.mu.Lock()
 	defer s.r.mu.Unlock()
@@ -26,12 +25,12 @@ func (s runningOrders) Create(_ context.Context, ro *model.RunningOrder) (*model
 	return cloneRunningOrder(ro), nil
 }
 
-func (s runningOrders) Get(_ context.Context, id string) (*model.RunningOrder, error) {
+func (s runningOrders) Get(_ context.Context, roID string) (*model.RunningOrder, error) {
 	s.r.mu.RLock()
 	defer s.r.mu.RUnlock()
-	ro, ok := s.r.runningOrders[id]
+	ro, ok := s.r.runningOrders[roID]
 	if !ok {
-		return nil, fmt.Errorf("running order %s: %w", id, repository.ErrNotFound)
+		return nil, fmt.Errorf("running order %s: %w", roID, repository.ErrNotFound)
 	}
 	return cloneRunningOrder(ro), nil
 }
@@ -54,16 +53,16 @@ func (s runningOrders) Update(_ context.Context, ro *model.RunningOrder) error {
 	return nil
 }
 
-func (s runningOrders) Delete(_ context.Context, id string) error {
+func (s runningOrders) Delete(_ context.Context, roID string) error {
 	s.r.mu.Lock()
 	defer s.r.mu.Unlock()
-	if _, ok := s.r.runningOrders[id]; !ok {
-		return fmt.Errorf("running order %s: %w", id, repository.ErrNotFound)
+	if _, ok := s.r.runningOrders[roID]; !ok {
+		return fmt.Errorf("running order %s: %w", roID, repository.ErrNotFound)
 	}
-	delete(s.r.runningOrders, id)
-	for storyID, story := range s.r.stories {
-		if story.RunningOrderID == id {
-			s.r.deleteStoryLocked(storyID)
+	delete(s.r.runningOrders, roID)
+	for k := range s.r.stories {
+		if k.ro == roID {
+			s.r.deleteStoryLocked(k)
 		}
 	}
 	return nil

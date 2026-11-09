@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"airshift/openmos/internal/model"
 	"airshift/openmos/internal/xml"
@@ -21,15 +20,13 @@ func (s *MOSService) processStoryBody(ctx context.Context, story *model.Story, s
 		for j, storyItem := range paragraph.Items {
 			// Create a new item
 			item := &model.Item{
-				ID:        fmt.Sprintf("%s_I%d_%d", story.ID, i, j),
-				StoryID:   story.ID,
-				Slug:      storyItem.ItemSlug,
-				ObjectID:  storyItem.ObjID,
-				Duration:  storyItem.ItemEdDur,
-				Status:    model.StatusPending,
-				Order:     j + 1,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				ID:             fmt.Sprintf("%s_I%d_%d", story.ID, i, j),
+				RunningOrderID: story.RunningOrderID,
+				StoryID:        story.ID,
+				Slug:           storyItem.ItemSlug,
+				ObjectID:       storyItem.ObjID,
+				Duration:       int64(storyItem.ItemEdDur),
+				Status:         model.StatusPending,
 			}
 
 			items = append(items, item)

@@ -30,7 +30,7 @@ func (c *ClientConnection) handleRunningOrderUpdate(ctx context.Context, event e
 	storyInfos := make([]xml.StoryInfo, 0, len(stories))
 	for _, story := range stories {
 		// Get items for this story
-		items, err := c.server.service.GetItemsForStory(ctx, story.ID)
+		items, err := c.server.service.GetItemsForStory(ctx, ro.ID, story.ID)
 		if err != nil {
 			logger.Warningf("Failed to get items for story %s: %v", story.ID, err)
 			continue
@@ -44,15 +44,15 @@ func (c *ClientConnection) handleRunningOrderUpdate(ctx context.Context, event e
 				Slug:     item.Slug,
 				Duration: fmt.Sprintf("%d", item.Duration),
 				ObjectID: item.ObjectID,
+				MosID:    item.MosID,
 			})
 		}
 
 		storyInfos = append(storyInfos, xml.StoryInfo{
-			ID:       story.ID,
-			Slug:     story.Slug,
-			Number:   story.Number,
-			Duration: fmt.Sprintf("%d", story.Duration),
-			Items:    itemInfos,
+			ID:     story.ID,
+			Slug:   story.Slug,
+			Number: story.Number,
+			Items:  itemInfos,
 		})
 	}
 

@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
-	"time"
 
 	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/model"
@@ -61,15 +61,14 @@ func (s *MOSService) GetRunningOrderWithStories(ctx context.Context, id string) 
 }
 
 // GetItemsForStory retrieves all items for a story
-func (s *MOSService) GetItemsForStory(ctx context.Context, storyID string) ([]*model.Item, error) {
-	return s.itemRepo.ListByStory(ctx, storyID)
+func (s *MOSService) GetItemsForStory(ctx context.Context, roID, storyID string) ([]*model.Item, error) {
+	return s.itemRepo.ListByStory(ctx, roID, storyID)
 }
 
-// ProcessRunningOrderInfo processes a running order creation/update message
+// ProcessRunningOrderInfo processes a running order creation/update message.
+// The stories and items in the message replace those stored before, in the
+// order the message lists them.
 func (s *MOSService) ProcessRunningOrderInfo(ctx context.Context, roInfo xml.RunningOrderInfo) error {
-	// Check if running order exists
-	existingRO, getErr := s.runningOrderRepo.Get(ctx, roInfo.ID)
-
 	// Parse duration if provided; an unparsable value falls back to 0
 	var duration int
 	if roInfo.Duration != "" {
@@ -78,84 +77,63 @@ func (s *MOSService) ProcessRunningOrderInfo(ctx context.Context, roInfo xml.Run
 		}
 	}
 
-	// Create or update running order
-	var err error
-	if getErr != nil { // Running order doesn't exist
-		// Create new running order
+	existingRO, err := s.runningOrderRepo.Get(ctx, roInfo.ID)
+	switch {
+	case errors.Is(err, repository.ErrNotFound):
 		ro := &model.RunningOrder{
-			ID:        roInfo.ID,
-			Slug:      roInfo.Slug,
-			Status:    model.StatusPending,
-			Duration:  duration,
-			Channel:   roInfo.Channel,
-			Version:   1,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			ID:       roInfo.ID,
+			Slug:     roInfo.Slug,
+			Status:   model.StatusPending,
+			Duration: duration,
+			Channel:  roInfo.Channel,
 		}
-
-		_, err = s.runningOrderRepo.Create(ctx, ro)
-		if err != nil {
+		if _, err := s.runningOrderRepo.Create(ctx, ro); err != nil {
 			return fmt.Errorf("failed to create running order: %w", err)
 		}
-	} else {
-		// Update existing running order
+	case err != nil:
+		return fmt.Errorf("failed to get running order: %w", err)
+	default:
 		existingRO.Slug = roInfo.Slug
 		existingRO.Channel = roInfo.Channel
 		existingRO.Duration = duration
-		existingRO.UpdatedAt = time.Now()
-
-		err = s.runningOrderRepo.Update(ctx, existingRO)
-		if err != nil {
+		if err := s.runningOrderRepo.Update(ctx, existingRO); err != nil {
 			return fmt.Errorf("failed to update running order: %w", err)
 		}
 	}
 
-	// Process stories (simplified - full implementation would handle deletions, etc.)
+	stories := make([]*model.Story, len(roInfo.Stories))
 	for i, storyInfo := range roInfo.Stories {
-		// Create or update each story
-		story := &model.Story{
+		stories[i] = &model.Story{
 			ID:             storyInfo.ID,
 			RunningOrderID: roInfo.ID,
 			Slug:           storyInfo.Slug,
 			Number:         storyInfo.Number,
 			Status:         model.StatusPending,
-			Order:          i + 1,
-			CreatedAt:      time.Now(),
-			UpdatedAt:      time.Now(),
 		}
+	}
+	if err := s.storyRepo.ReplaceAll(ctx, roInfo.ID, stories); err != nil {
+		return fmt.Errorf("failed to replace stories: %w", err)
+	}
 
-		// Parse duration if provided
-		if storyInfo.Duration != "" {
-			if storyDuration, err := strconv.Atoi(storyInfo.Duration); err == nil {
-				story.Duration = storyDuration
+	for _, storyInfo := range roInfo.Stories {
+		items := make([]*model.Item, len(storyInfo.Items))
+		for j, itemInfo := range storyInfo.Items {
+			items[j] = &model.Item{
+				ID:             itemInfo.ID,
+				RunningOrderID: roInfo.ID,
+				StoryID:        storyInfo.ID,
+				ObjectID:       itemInfo.ObjectID,
+				MosID:          itemInfo.MosID,
+				Slug:           itemInfo.Slug,
+				Status:         model.StatusPending,
+			}
+			// An unparsable or out-of-range duration falls back to 0
+			if d, err := strconv.ParseUint(itemInfo.Duration, 10, 32); err == nil {
+				items[j].Duration = int64(d)
 			}
 		}
-
-		// Create or update the story
-		existingStory, err := s.storyRepo.Get(ctx, storyInfo.ID)
-		if err != nil {
-			// Story doesn't exist, create it
-			_, err = s.storyRepo.Create(ctx, story)
-			if err != nil {
-				return fmt.Errorf("failed to create story: %w", err)
-			}
-		} else {
-			// Story exists, update it
-			existingStory.Slug = storyInfo.Slug
-			existingStory.Number = storyInfo.Number
-			existingStory.Order = i + 1
-			existingStory.UpdatedAt = time.Now()
-
-			if storyInfo.Duration != "" {
-				if storyDuration, err := strconv.Atoi(storyInfo.Duration); err == nil {
-					existingStory.Duration = storyDuration
-				}
-			}
-
-			err = s.storyRepo.Update(ctx, existingStory)
-			if err != nil {
-				return fmt.Errorf("failed to update story: %w", err)
-			}
+		if err := s.itemRepo.ReplaceAll(ctx, roInfo.ID, storyInfo.ID, items); err != nil {
+			return fmt.Errorf("failed to replace items of story %s: %w", storyInfo.ID, err)
 		}
 	}
 

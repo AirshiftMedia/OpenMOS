@@ -13,6 +13,7 @@ package repotest
 import (
 	"errors"
 	"slices"
+	"strconv"
 	"testing"
 	"time"
 
@@ -32,10 +33,12 @@ func Run(t *testing.T, newRepo Factory) {
 	})
 	t.Run("Stories", func(t *testing.T) {
 		testCRUD(t, newRepo, storyKind)
+		testOrdering(t, newRepo, storyOrdering)
 		testStories(t, newRepo)
 	})
 	t.Run("Items", func(t *testing.T) {
 		testCRUD(t, newRepo, itemKind)
+		testOrdering(t, newRepo, itemOrdering)
 		testItems(t, newRepo)
 	})
 	t.Run("Objects", func(t *testing.T) {
@@ -87,3 +90,5 @@ func equalIDs(t *testing.T, op string, got, want []string) {
 		t.Errorf("%s: IDs = %v, want %v", op, got, want)
 	}
 }
+
+func itoa(n int) string { return strconv.Itoa(n) }

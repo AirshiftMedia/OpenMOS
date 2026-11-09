@@ -54,7 +54,7 @@ OpenMOS follows a **Clean Layered Architecture** with clear separation of concer
 | **Server** | `internal/server/` | TCP connections, client management, heartbeat monitoring |
 | **Service** | `internal/service/` | Business logic, MOS operations, event publishing |
 | **Repository** | `internal/repository/` | Data access abstraction, CRUD operations |
-| **Store** | `internal/store/postgres/` | PostgreSQL connection pool and schema migrations (repositories to follow) |
+| **Store** | `internal/store/postgres/` | PostgreSQL connection pool, schema migrations and repositories |
 | **Model** | `internal/model/` | Domain entities and value objects |
 | **XML** | `internal/xml/` | Message parsing and serialization |
 | **Events** | `internal/events/` | Pub-sub event bus for real-time notifications |
@@ -83,12 +83,15 @@ OpenMOS/
 │   │   ├── repository/
 │   │   │   ├── repository.go         # Interface definitions
 │   │   │   ├── errors.go             # Shared errors (ErrNotFound, ...)
+│   │   │   ├── order.go              # ID checks and shared ordering rules
 │   │   │   ├── memory/               # In-memory reference implementation
 │   │   │   └── repotest/             # Contract suite for every implementation
 │   │   │
 │   │   ├── store/postgres/
 │   │   │   ├── migrate.go            # Goose migrations (embedded SQL)
 │   │   │   ├── pool.go               # pgx connection pool, TLS rules
+│   │   │   ├── repository.go         # PostgreSQL repositories (New), error mapping
+│   │   │   ├── runningorder.go, story.go, item.go, object.go
 │   │   │   └── migrations/           # Schema migrations (00001_init.sql, ...)
 │   │   │
 │   │   ├── server/
@@ -162,7 +165,7 @@ RunningOrder (1) ──► (N) Story ──► (N) Item ──► MOSObject
 2. **Heartbeat Monitoring**: Client heartbeat is tracked; timeout triggers disconnection
 3. **Message Reception**: XML messages are parsed and validated
 4. **Service Processing**: Business logic handles operations (create/update/replace)
-5. **Storage**: Changes are stored through the repository interfaces (in memory until the PostgreSQL store lands)
+5. **Storage**: Changes are stored through the repository interfaces (in memory until the server switches to PostgreSQL in MOS-16)
 6. **Event Publishing**: Service publishes events to the event bus
 7. **Client Notification**: Connected clients receive real-time updates via subscriptions
 
@@ -336,7 +339,8 @@ sentry:
 ### Testing
 - Write unit tests for service and repository layers
 - Every repository implementation must pass the contract suite:
-  call `repotest.Run` from its tests (see `repository/memory`)
+  call `repotest.Run` from its tests (see `repository/memory` and
+  `store/postgres/repository_test.go`)
 - Use interfaces to enable mocking
 - Test XML parsing with example messages from `/res/`
 - PostgreSQL tests (`internal/store/postgres`) need a throwaway database in

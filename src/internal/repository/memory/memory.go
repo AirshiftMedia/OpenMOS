@@ -15,23 +15,29 @@ import (
 	"airshift/openmos/internal/repository"
 )
 
+type storyKey struct{ ro, story string }
+
+type itemKey struct{ ro, story, item string }
+
+type objectKey struct{ mos, obj string }
+
 // Repository holds all records behind one lock, so deletes can cascade
 // across record types atomically.
 type Repository struct {
 	mu            sync.RWMutex
 	runningOrders map[string]*model.RunningOrder
-	stories       map[string]*model.Story
-	items         map[string]*model.Item
-	objects       map[string]*model.MOSObject
+	stories       map[storyKey]*model.Story
+	items         map[itemKey]*model.Item
+	objects       map[objectKey]*model.MOSObject
 }
 
 // New returns an empty repository.
 func New() *Repository {
 	return &Repository{
 		runningOrders: make(map[string]*model.RunningOrder),
-		stories:       make(map[string]*model.Story),
-		items:         make(map[string]*model.Item),
-		objects:       make(map[string]*model.MOSObject),
+		stories:       make(map[storyKey]*model.Story),
+		items:         make(map[itemKey]*model.Item),
+		objects:       make(map[objectKey]*model.MOSObject),
 	}
 }
 
@@ -54,11 +60,11 @@ func (r *Repository) Objects() repository.ObjectRepository { return objects{r} }
 func now() time.Time { return time.Now().Round(0) }
 
 // deleteStoryLocked deletes a story and its items. The caller holds r.mu.
-func (r *Repository) deleteStoryLocked(id string) {
-	delete(r.stories, id)
-	for itemID, item := range r.items {
-		if item.StoryID == id {
-			delete(r.items, itemID)
+func (r *Repository) deleteStoryLocked(k storyKey) {
+	delete(r.stories, k)
+	for ik := range r.items {
+		if ik.ro == k.ro && ik.story == k.story {
+			delete(r.items, ik)
 		}
 	}
 }
@@ -94,22 +100,17 @@ func cloneObject(o *model.MOSObject) *model.MOSObject {
 	return &c
 }
 
-// newestFirst orders by CreatedAt descending, then by ID for equal times.
-func newestFirst(aCreated, bCreated time.Time, aID, bID string) int {
+// newestFirst orders by CreatedAt descending, then by key for equal times.
+func newestFirst(aCreated, bCreated time.Time, aKey, bKey string) int {
 	if c := bCreated.Compare(aCreated); c != 0 {
 		return c
 	}
-	return cmp.Compare(aID, bID)
-}
-
-// byOrder orders by Order ascending, then by ID for equal positions.
-func byOrder(aOrder, bOrder int, aID, bID string) int {
-	return cmp.Or(cmp.Compare(aOrder, bOrder), cmp.Compare(aID, bID))
+	return cmp.Compare(aKey, bKey)
 }
 
 // sorted returns copies of the values in m that keep accepts, sorted by
 // cmpFn. The caller holds r.mu.
-func sorted[T any](m map[string]*T, keep func(*T) bool, clone func(*T) *T, cmpFn func(a, b *T) int) []*T {
+func sorted[K comparable, T any](m map[K]*T, keep func(*T) bool, clone func(*T) *T, cmpFn func(a, b *T) int) []*T {
 	out := make([]*T, 0)
 	for _, v := range m {
 		if keep(v) {
@@ -118,4 +119,17 @@ func sorted[T any](m map[string]*T, keep func(*T) bool, clone func(*T) *T, cmpFn
 	}
 	slices.SortFunc(out, cmpFn)
 	return out
+}
+
+// byOrder sorts children by Order, then by ID.
+func byOrder(aOrder, bOrder int, aID, bID string) int {
+	return cmp.Or(cmp.Compare(aOrder, bOrder), cmp.Compare(aID, bID))
+}
+
+// nextOrder returns the Order for a child appended after siblings.
+func nextOrder(siblings []int) int {
+	if len(siblings) == 0 {
+		return 0
+	}
+	return slices.Max(siblings) + 1
 }

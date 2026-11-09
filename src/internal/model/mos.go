@@ -4,49 +4,52 @@ import (
 	"time"
 )
 
+// The model follows the MOS keys: an ID is unique only within its parent, so
+// stories and items carry their parents' IDs, and objects their MOS device.
+// Order is the position among siblings and is managed by the repositories.
+// Durations of items and objects are counts of samples at TimeBase samples
+// per second (MOS objTB, e.g. 50 for PAL or 59.94 for NTSC).
+
 // MOSObject represents the lowest level media object in the MOS hierarchy
 type MOSObject struct {
-	ID          string            `json:"id"`         // Unique MOS Object ID
-	ObjectType  string            `json:"objectType"` // Type of object (e.g., VIDEO, AUDIO, GRAPHIC)
-	Slug        string            `json:"slug"`       // Human-readable name
-	Duration    int               `json:"duration"`   // Duration in seconds
-	TimeBase    int               `json:"timeBase,omitempty"`
-	Status      StatusType        `json:"status"`
-	ObjectID    string            `json:"objectID,omitempty"`
-	MediaID     string            `json:"mediaID,omitempty"`
-	MosAbstract string            `json:"mosAbstract,omitempty"`
-	Metadata    map[string]string `json:"metadata,omitempty"`
-	CreatedAt   time.Time         `json:"createdAt"`
-	UpdatedAt   time.Time         `json:"updatedAt"`
+	MosID      string            `json:"mosID"`      // MOS device that owns the object
+	ID         string            `json:"id"`         // objID, unique within MosID
+	ObjectType string            `json:"objectType"` // STILL, AUDIO or VIDEO; empty if unknown
+	Slug       string            `json:"slug"`       // Human-readable name
+	Duration   int64             `json:"duration"`   // objDur, in samples
+	TimeBase   float64           `json:"timeBase,omitempty"`
+	Status     StatusType        `json:"status"`
+	Abstract   string            `json:"abstract,omitempty"` // mosAbstract
+	Metadata   map[string]string `json:"metadata,omitempty"`
+	CreatedAt  time.Time         `json:"createdAt"`
+	UpdatedAt  time.Time         `json:"updatedAt"`
 }
 
 // Item represents a single item within a story
 type Item struct {
-	ID                string            `json:"id"`                 // Unique Item ID
-	ObjectID          string            `json:"objectID,omitempty"` // Reference to MOS Object
-	Slug              string            `json:"slug"`
-	Duration          int               `json:"duration"` // Duration in seconds
-	EditorialDuration int               `json:"editorialDuration,omitempty"`
-	TimeBase          int               `json:"timeBase,omitempty"`
-	Status            StatusType        `json:"status"`
-	Order             int               `json:"order"`   // Order within the story
-	StoryID           string            `json:"storyID"` // Parent story ID
-	Metadata          map[string]string `json:"metadata,omitempty"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
+	RunningOrderID string            `json:"runningOrderID"`     // Parent running order
+	StoryID        string            `json:"storyID"`            // Parent story
+	ID             string            `json:"id"`                 // itemID, unique within its story
+	ObjectID       string            `json:"objectID,omitempty"` // Referenced MOS object (objID)
+	MosID          string            `json:"mosID,omitempty"`    // MOS device of the referenced object
+	Slug           string            `json:"slug"`
+	Duration       int64             `json:"duration"` // itemEdDur, in samples
+	TimeBase       float64           `json:"timeBase,omitempty"`
+	Status         StatusType        `json:"status"`
+	Order          int               `json:"order"` // Position within the story
+	Metadata       map[string]string `json:"metadata,omitempty"`
+	CreatedAt      time.Time         `json:"createdAt"`
+	UpdatedAt      time.Time         `json:"updatedAt"`
 }
 
 // Story represents a story in the running order (collection of items)
 type Story struct {
-	ID             string            `json:"id"`             // Unique Story ID
 	RunningOrderID string            `json:"runningOrderID"` // Parent running order
+	ID             string            `json:"id"`             // storyID, unique within its running order
 	Slug           string            `json:"slug"`
 	Number         string            `json:"number,omitempty"`
-	Duration       int               `json:"duration"` // Duration in seconds
 	Status         StatusType        `json:"status"`
-	Order          int               `json:"order"`                // Order within the running order
-	PreviousID     string            `json:"previousID,omitempty"` // Previous story ID for linked list
-	NextID         string            `json:"nextID,omitempty"`     // Next story ID for linked list
+	Order          int               `json:"order"` // Position within the running order
 	Presenter      string            `json:"presenter,omitempty"`
 	Metadata       map[string]string `json:"metadata,omitempty"`
 	CreatedAt      time.Time         `json:"createdAt"`
@@ -55,18 +58,16 @@ type Story struct {
 
 // RunningOrder represents the top-level running order (collection of stories)
 type RunningOrder struct {
-	ID           string            `json:"id"`    // Unique Running Order ID
-	MosID        string            `json:"mosID"` // MOS ID for this running order
-	Slug         string            `json:"slug"`
-	Status       StatusType        `json:"status"`
-	Duration     int               `json:"duration"`               // Total duration in seconds
-	FirstStoryID string            `json:"firstStoryID,omitempty"` // First story ID for linked list
-	LastStoryID  string            `json:"lastStoryID,omitempty"`  // Last story ID for linked list
-	AirTime      *time.Time        `json:"airTime,omitempty"`
-	Channel      string            `json:"channel,omitempty"`
-	Metadata     map[string]string `json:"metadata,omitempty"`
-	Version      int               `json:"version"`
-	CreatedBy    string            `json:"createdBy,omitempty"`
-	CreatedAt    time.Time         `json:"createdAt"`
-	UpdatedAt    time.Time         `json:"updatedAt"`
+	ID        string            `json:"id"`    // roID
+	MosID     string            `json:"mosID"` // MOS ID for this running order
+	Slug      string            `json:"slug"`
+	Status    StatusType        `json:"status"`
+	Duration  int               `json:"duration"`          // roEdDur, in seconds
+	AirTime   *time.Time        `json:"airTime,omitempty"` // roEdStart
+	Channel   string            `json:"channel,omitempty"`
+	Metadata  map[string]string `json:"metadata,omitempty"`
+	Version   int               `json:"version"`
+	CreatedBy string            `json:"createdBy,omitempty"`
+	CreatedAt time.Time         `json:"createdAt"`
+	UpdatedAt time.Time         `json:"updatedAt"`
 }

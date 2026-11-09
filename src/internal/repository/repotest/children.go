@@ -9,70 +9,61 @@ import (
 func testStories(t *testing.T, newRepo Factory) {
 	t.Run("CreateRequiresRunningOrder", func(t *testing.T) {
 		r := newRepo(t)
-		_, err := r.Stories().Create(t.Context(), newStory("s1", "missing", 1))
+		_, err := r.Stories().Create(t.Context(), newStory("missing", "s1"))
 		wantErr(t, "Create story without running order", err, repository.ErrNotFound)
 	})
 
-	t.Run("ListByRunningOrder", func(t *testing.T) {
-		r := newRepo(t)
+	// A storyID is unique only within its running order
+	t.Run("KeyIncludesRunningOrder", func(t *testing.T) {
+		r, ctx := newRepo(t), t.Context()
 		createRunningOrder(t, r, "ro-1")
 		createRunningOrder(t, r, "ro-2")
-		// Created out of order, so the list must follow Order, not insertion
-		createStory(t, r, "s3", "ro-1", 3)
-		createStory(t, r, "s1", "ro-1", 1)
-		createStory(t, r, "s2", "ro-1", 2)
-		createStory(t, r, "other", "ro-2", 1)
+		createStory(t, r, "ro-1", "s")
+		createStory(t, r, "ro-2", "s")
 
-		list := func(roID string) []string {
-			t.Helper()
-			stories, err := r.Stories().ListByRunningOrder(t.Context(), roID)
-			must(t, "ListByRunningOrder "+roID, err)
-			return storyKind.ids(stories)
+		s, err := r.Stories().Get(ctx, "ro-1", "s")
+		must(t, "Get ro-1/s", err)
+		s.Slug = "changed in ro-1"
+		must(t, "Update ro-1/s", r.Stories().Update(ctx, s))
+		other, err := r.Stories().Get(ctx, "ro-2", "s")
+		must(t, "Get ro-2/s", err)
+		if other.Slug != "slug s" {
+			t.Errorf("updating ro-1/s changed ro-2/s: slug %q", other.Slug)
 		}
-		equalIDs(t, "ro-1", list("ro-1"), []string{"s1", "s2", "s3"})
-		equalIDs(t, "ro-2", list("ro-2"), []string{"other"})
-		equalIDs(t, "unknown running order", list("missing"), nil)
 
-		// Moving a story first must reorder the list
-		s3, err := r.Stories().Get(t.Context(), "s3")
-		must(t, "Get s3", err)
-		s3.Order = 0
-		must(t, "Update s3", r.Stories().Update(t.Context(), s3))
-		equalIDs(t, "ro-1 after move", list("ro-1"), []string{"s3", "s1", "s2"})
+		must(t, "Delete ro-1/s", r.Stories().Delete(ctx, "ro-1", "s"))
+		_, err = r.Stories().Get(ctx, "ro-2", "s")
+		must(t, "Get ro-2/s after deleting ro-1/s", err)
+		_, err = r.Stories().Get(ctx, "ro-3", "s")
+		wantErr(t, "Get s in an unknown running order", err, repository.ErrNotFound)
 	})
 }
 
 func testItems(t *testing.T, newRepo Factory) {
 	t.Run("CreateRequiresStory", func(t *testing.T) {
 		r := newRepo(t)
-		_, err := r.Items().Create(t.Context(), newItem("i1", "missing", 1))
+		createRunningOrder(t, r, "ro-1")
+		_, err := r.Items().Create(t.Context(), newItem("ro-1", "missing", "i1"))
 		wantErr(t, "Create item without story", err, repository.ErrNotFound)
 	})
 
-	t.Run("ListByStory", func(t *testing.T) {
-		r := newRepo(t)
+	// An itemID is unique only within its story, and a storyID only within
+	// its running order
+	t.Run("KeyIncludesStoryAndRunningOrder", func(t *testing.T) {
+		r, ctx := newRepo(t), t.Context()
 		createRunningOrder(t, r, "ro-1")
-		createStory(t, r, "s1", "ro-1", 1)
-		createStory(t, r, "s2", "ro-1", 2)
-		createItem(t, r, "i3", "s1", 3)
-		createItem(t, r, "i1", "s1", 1)
-		createItem(t, r, "i2", "s1", 2)
-		createItem(t, r, "other", "s2", 1)
-
-		list := func(storyID string) []string {
-			t.Helper()
-			items, err := r.Items().ListByStory(t.Context(), storyID)
-			must(t, "ListByStory "+storyID, err)
-			return itemKind.ids(items)
+		createRunningOrder(t, r, "ro-2")
+		createStory(t, r, "ro-1", "s1")
+		createStory(t, r, "ro-1", "s2")
+		createStory(t, r, "ro-2", "s1")
+		for _, k := range [][2]string{{"ro-1", "s1"}, {"ro-1", "s2"}, {"ro-2", "s1"}} {
+			createItem(t, r, k[0], k[1], "i")
 		}
-		equalIDs(t, "s1", list("s1"), []string{"i1", "i2", "i3"})
-		equalIDs(t, "s2", list("s2"), []string{"other"})
-		equalIDs(t, "unknown story", list("missing"), nil)
 
-		i3, err := r.Items().Get(t.Context(), "i3")
-		must(t, "Get i3", err)
-		i3.Order = 0
-		must(t, "Update i3", r.Items().Update(t.Context(), i3))
-		equalIDs(t, "s1 after move", list("s1"), []string{"i3", "i1", "i2"})
+		must(t, "Delete ro-1/s1/i", r.Items().Delete(ctx, "ro-1", "s1", "i"))
+		for _, k := range [][2]string{{"ro-1", "s2"}, {"ro-2", "s1"}} {
+			_, err := r.Items().Get(ctx, k[0], k[1], "i")
+			must(t, "Get "+k[0]+"/"+k[1]+"/i after deleting ro-1/s1/i", err)
+		}
 	})
 }
