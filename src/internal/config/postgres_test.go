@@ -12,7 +12,7 @@ import (
 func TestDatabaseURLOverridesYAML(t *testing.T) {
 	dir := isolate(t)
 	path := filepath.Join(dir, "config.yaml")
-	yamlDoc := "postgres:\n    url: postgres://from-yaml/openmos\n    maxconns: 4\n    connecttimeout: 3s\n"
+	yamlDoc := "postgres:\n    url: postgres://from-yaml/openmos\n    migrateurl: postgres://migrate-yaml/openmos\n    maxconns: 4\n    connecttimeout: 3s\n"
 	if err := os.WriteFile(path, []byte(yamlDoc), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -21,19 +21,23 @@ func TestDatabaseURLOverridesYAML(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadConfig: %v", err)
 	}
-	if cfg.Postgres.URL != "postgres://from-yaml/openmos" || cfg.Postgres.MaxConns != 4 ||
+	if cfg.Postgres.URL != "postgres://from-yaml/openmos" || cfg.Postgres.MigrateURL != "postgres://migrate-yaml/openmos" ||
+		cfg.Postgres.MaxConns != 4 ||
 		cfg.Postgres.ConnectTimeout != 3*time.Second {
 		t.Errorf("YAML postgres block not loaded: %+v", cfg.Postgres)
 	}
 
 	t.Setenv("DATABASE_URL", "postgres://from-env/openmos")
+	t.Setenv("MIGRATE_DATABASE_URL", "postgres://migrate-env/openmos")
 	t.Setenv("POSTGRES_MAX_CONNS", "7")
 	cfg, err = LoadConfig()
 	if err != nil {
 		t.Fatalf("LoadConfig: %v", err)
 	}
-	if cfg.Postgres.URL != "postgres://from-env/openmos" || cfg.Postgres.MaxConns != 7 {
-		t.Errorf("env did not override: URL %q, MaxConns %d", cfg.Postgres.URL, cfg.Postgres.MaxConns)
+	if cfg.Postgres.URL != "postgres://from-env/openmos" || cfg.Postgres.MigrateURL != "postgres://migrate-env/openmos" ||
+		cfg.Postgres.MaxConns != 7 {
+		t.Errorf("env did not override: URL %q, MigrateURL %q, MaxConns %d",
+			cfg.Postgres.URL, cfg.Postgres.MigrateURL, cfg.Postgres.MaxConns)
 	}
 }
 
@@ -49,7 +53,7 @@ func TestGeneratedConfigHasNoDatabaseURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadConfig: %v", err)
 	}
-	if cfg.Postgres.URL != "" || cfg.Postgres.MaxConns != 10 {
+	if cfg.Postgres.URL != "" || cfg.Postgres.MigrateURL != "" || cfg.Postgres.MaxConns != 10 {
 		t.Errorf("generated postgres block = %+v, want empty URL and defaults", cfg.Postgres)
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"airshift/openmos/internal/config"
+	"airshift/openmos/internal/store/postgres"
 	"airshift/openmos/pkg/logger"
 
 	"github.com/getsentry/sentry-go"
@@ -18,6 +19,8 @@ func main() {
 	// Define command-line flags
 	generateConfig := flag.String("generate-config", "", "Generate a default configuration file at the specified path and exit")
 	configPath := flag.String("config", "", "Path to the configuration file (default: search for config.yaml)")
+	migrate := flag.Bool("migrate", false, "Apply pending database schema migrations, then start the server")
+	migrateOnly := flag.Bool("migrate-only", false, "Apply pending database schema migrations and exit")
 
 	// Parse flags
 	flag.Parse()
@@ -49,11 +52,19 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if pool := connectDatabase(ctx, cfg, log); pool != nil {
-		defer pool.Close()
+	if *migrate || *migrateOnly {
+		migrateDatabase(ctx, cfg, log)
+		if *migrateOnly {
+			log.Info("Migrations done; exiting (--migrate-only)")
+			sentry.Flush(2 * time.Second)
+			return
+		}
 	}
 
-	tcpServer := newTCPServer(cfg, newRepository(log), log)
+	pool := openDatabase(ctx, cfg, log)
+	defer pool.Close()
+
+	tcpServer := newTCPServer(cfg, postgres.New(pool), log)
 
 	// Handle signals for graceful shutdown
 	sigCh := make(chan os.Signal, 1)

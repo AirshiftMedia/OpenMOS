@@ -25,9 +25,13 @@ type Config struct {
 
 	// PostgreSQL configuration. URL is a secret (it holds the password): set
 	// it with DATABASE_URL or in a local, gitignored config.yaml. Without a
-	// URL, the standard PG* environment variables are used.
+	// URL, the standard PG* environment variables are used. MigrateURL, also
+	// a secret (MIGRATE_DATABASE_URL), is used for --migrate when set, so
+	// migrations can run as the schema owner over a direct connection;
+	// otherwise URL is used.
 	Postgres struct {
 		URL               string
+		MigrateURL        string
 		MaxConns          int32
 		MinConns          int32
 		ConnectTimeout    time.Duration

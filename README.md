@@ -8,11 +8,11 @@ The project will aim at compliance with Profile 7.
 > [!NOTE]
 > The MOS protocol specification requires TCP socket connections (default port 10540). At initial stages, message attributes differ from the protocol specification due to practical reasons.
 
-Implementation status (2026-11-08):
+Implementation status (2026-11-09):
 * [x]  Core server skeleton and TCP socket server
 * [x]  Sentry observability
 * [x]  Internal event bus for client notifications
-* [ ]  PostgreSQL data repository (in progress; runs on in-memory storage until then, see [migration plan](doc/database-migration.md))
+* [x]  PostgreSQL data repository (see [migration plan](doc/database-migration.md))
 * [ ]  Profile 0 - Basic Communication (partial)
 * [ ]  Profile 1 - Basic Object Based Workflow
 * [ ]  Profile 2 - Basic Running Order / Content List Workflow (partial)
@@ -28,7 +28,7 @@ The [roadmap](doc/roadmap.md) shows how ready each profile is, the milestones th
 
 OpenMOS implements the MOS protocol using:
 - **TCP Socket Server**: Maintains persistent connections with MOS clients (NCS systems)
-- **PostgreSQL**: Stores running orders, stories, items, and MOS objects (in progress; until it lands the server keeps data in memory only, see [database-migration.md](doc/database-migration.md))
+- **PostgreSQL**: Stores running orders, stories, items, and MOS objects; each MOS message is applied in one transaction (see [database-migration.md](doc/database-migration.md))
 - **Sentry**: Provides error tracking and performance monitoring
 
 The server handles multiple concurrent client connections, processes MOS XML messages, and manages the lifecycle of running orders and their associated content.
@@ -108,10 +108,22 @@ cd src
 go build -o openmos
 ```
 
+The server needs PostgreSQL. For local development:
+
+```bash
+docker compose up -d       # from the repository root
+export APP_ENV=development DATABASE_URL='postgres://openmos:openmos@localhost:5432/openmos?sslmode=disable'
+./openmos --migrate        # apply pending schema migrations, then start
+```
+
+`--migrate-only` applies the migrations and exits, for deployment jobs. Without
+either flag the server checks the schema and refuses to start if migrations
+are pending.
+
 ## Requirements
 
-- Go 1.25 or later
-- PostgreSQL 17, optional until the PostgreSQL store is wired in (MOS-16). For local development, `docker compose up -d` starts one (see `docker-compose.yml`)
+- Go 1.26 or later
+- PostgreSQL 17. For local development, `docker compose up -d` starts one (see `docker-compose.yml`)
 - Network access on port 10540 (default MOS port)
 
 ## License

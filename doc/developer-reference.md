@@ -11,7 +11,7 @@ OpenMOS is an implementation of the Media Object Server (MOS) Protocol 4.0 using
 | Component | Technology | Version |
 |-----------|------------|---------|
 | Language | Go | 1.25+ |
-| Database | PostgreSQL (in progress; in-memory until then) | 17 |
+| Database | PostgreSQL | 17 |
 | Observability | Sentry | v0.50 |
 | Communication | TCP Sockets | Port 10540 |
 | Configuration | YAML | go.yaml.in/yaml/v3 |
@@ -42,7 +42,7 @@ OpenMOS follows a **Clean Layered Architecture** with clear separation of concer
                           │
 ┌─────────────────────────▼───────────────────────────────────┐
 │                   Database Layer                            │
-│        (PostgreSQL; in-memory store until MOS-16)           │
+│                     (PostgreSQL)                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -84,7 +84,7 @@ OpenMOS/
 │   │   │   ├── repository.go         # Interface definitions
 │   │   │   ├── errors.go             # Shared errors (ErrNotFound, ...)
 │   │   │   ├── order.go              # ID checks and shared ordering rules
-│   │   │   ├── memory/               # In-memory reference implementation
+│   │   │   ├── memory/               # In-memory reference implementation (tests only)
 │   │   │   └── repotest/             # Contract suite for every implementation
 │   │   │
 │   │   ├── store/postgres/
@@ -165,7 +165,7 @@ RunningOrder (1) ──► (N) Story ──► (N) Item ──► MOSObject
 2. **Heartbeat Monitoring**: Client heartbeat is tracked; timeout triggers disconnection
 3. **Message Reception**: XML messages are parsed and validated
 4. **Service Processing**: Business logic handles operations (create/update/replace)
-5. **Storage**: Changes are stored through the repository interfaces (in memory until the server switches to PostgreSQL in MOS-16)
+5. **Storage**: Each change is stored in PostgreSQL in one transaction, through the repository interfaces
 6. **Event Publishing**: Service publishes events to the event bus
 7. **Client Notification**: Connected clients receive real-time updates via subscriptions
 
@@ -174,7 +174,7 @@ RunningOrder (1) ──► (N) Story ──► (N) Item ──► MOSObject
 ### Core Infrastructure
 - [x] TCP Socket Server with multi-client support
 - [x] Repository pattern with a contract test suite and an in-memory store
-- [ ] PostgreSQL persistence (M1, see database-migration.md)
+- [x] PostgreSQL persistence (M1, see database-migration.md)
 - [x] YAML configuration with environment variable overrides
 - [x] Multi-level logging with Sentry integration
 - [x] Client heartbeat monitoring with timeout detection
@@ -288,6 +288,7 @@ server:
 
 postgres:
     url: ""                    # Connection URL; a secret, so use DATABASE_URL instead
+    migrateurl: ""             # Optional URL for --migrate; a secret, use MIGRATE_DATABASE_URL
     maxconns: 10               # Pool size (env POSTGRES_MAX_CONNS)
     minconns: 1                # Connections kept open (env POSTGRES_MIN_CONNS)
     connecttimeout: 5s         # Connect and startup ping timeout (POSTGRES_CONNECT_TIMEOUT)
@@ -314,14 +315,27 @@ sentry:
 
 - `DATABASE_URL` (the backend01 `.env` name) overrides `postgres.url`. With
   neither set, the standard `PG*` variables (`PGHOST`, `PGUSER`, ...) are used;
-  with nothing set, the server runs without a database.
-- When a database is configured, the server connects and pings it at startup
-  and exits if that fails. Logs and errors name host, database and user, never
+  with nothing set, the server refuses to start: PostgreSQL is required.
+- The server connects and pings the database at startup, checks that the
+  schema is migrated, and exits if either fails. Logs and errors name host, database and user, never
   the password.
 - Outside `app.environment: development`, connections must use
   `sslmode=verify-full` with `sslrootcert` pointing at the server CA (on the
   server, `/secrets/aiven-ca.pem`). Connect to Aiven directly, not through
   its PgBouncer pool.
+
+### Startup flags
+
+| Flag | Effect |
+| --- | --- |
+| `--migrate` | Apply pending schema migrations, then start the server |
+| `--migrate-only` | Apply pending schema migrations and exit (deployment jobs) |
+
+Migrations connect with `MIGRATE_DATABASE_URL` (`postgres.migrateurl`) if set,
+otherwise with `DATABASE_URL`. On Aiven, set it to the `openmos_migrate` role
+over a direct connection, and `DATABASE_URL` to `openmos_app`. The same
+verify-full rule applies. Without either flag the server refuses to start on
+an outdated schema; a schema newer than the build only logs a warning.
 
 ## Development Guidelines
 
