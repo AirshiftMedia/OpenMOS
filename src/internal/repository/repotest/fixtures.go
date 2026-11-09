@@ -8,10 +8,13 @@ import (
 	"airshift/openmos/internal/repository"
 )
 
-// IDs of the parents created for the story and item CRUD tests.
 const (
+	// Parents created for the story and item CRUD tests
 	parentRO    = "ro-parent"
 	parentStory = "story-parent"
+
+	// MOS device of the object fixtures
+	testMOS = "test.mos"
 )
 
 // The fixtures fill every field, so a store that drops one fails the
@@ -20,36 +23,33 @@ const (
 func newRunningOrder(id string) *model.RunningOrder {
 	air := time.Date(2026, 11, 8, 18, 30, 0, 0, time.UTC)
 	return &model.RunningOrder{
-		ID: id, MosID: "test.mos", Slug: "slug " + id, Status: model.StatusReady,
-		Duration: 1800, FirstStoryID: "s-first", LastStoryID: "s-last",
-		AirTime: &air, Channel: "A", Metadata: map[string]string{"k": "v"},
-		Version: 1, CreatedBy: "repotest",
+		ID: id, MosID: testMOS, Slug: "slug " + id, Status: model.StatusReady,
+		Duration: 1800, AirTime: &air, Channel: "A",
+		Metadata: map[string]string{"k": "v"}, Version: 1, CreatedBy: "repotest",
 	}
 }
 
-func newStory(id, roID string, order int) *model.Story {
+func newStory(roID, id string) *model.Story {
 	return &model.Story{
-		ID: id, RunningOrderID: roID, Slug: "slug " + id, Number: "A1",
-		Duration: 90, Status: model.StatusPending, Order: order,
-		PreviousID: "s-prev", NextID: "s-next", Presenter: "presenter",
+		RunningOrderID: roID, ID: id, Slug: "slug " + id, Number: "A1",
+		Status: model.StatusPending, Presenter: "presenter",
 		Metadata: map[string]string{"k": "v"},
 	}
 }
 
-func newItem(id, storyID string, order int) *model.Item {
+func newItem(roID, storyID, id string) *model.Item {
 	return &model.Item{
-		ID: id, ObjectID: "obj-1", Slug: "slug " + id, Duration: 30,
-		EditorialDuration: 25, TimeBase: 25, Status: model.StatusReady,
-		Order: order, StoryID: storyID, Metadata: map[string]string{"k": "v"},
+		RunningOrderID: roID, StoryID: storyID, ID: id, ObjectID: "obj-1",
+		MosID: testMOS, Slug: "slug " + id, Duration: 1500, TimeBase: 59.94,
+		Status: model.StatusReady, Metadata: map[string]string{"k": "v"},
 	}
 }
 
-func newObject(id string) *model.MOSObject {
+func newObject(mosID, id string) *model.MOSObject {
 	return &model.MOSObject{
-		ID: id, ObjectType: "VIDEO", Slug: "slug " + id, Duration: 30,
-		TimeBase: 25, Status: model.StatusReady, ObjectID: "ext-" + id,
-		MediaID: "media-" + id, MosAbstract: "abstract",
-		Metadata: map[string]string{"k": "v"},
+		MosID: mosID, ID: id, ObjectType: "VIDEO", Slug: "slug " + id,
+		Duration: 4294967295, TimeBase: 50, Status: model.StatusReady,
+		Abstract: "abstract", Metadata: map[string]string{"k": "v"},
 	}
 }
 
@@ -59,20 +59,20 @@ func createRunningOrder(t *testing.T, r repository.Repository, id string) {
 	must(t, "create running order "+id, err)
 }
 
-func createStory(t *testing.T, r repository.Repository, id, roID string, order int) {
+func createStory(t *testing.T, r repository.Repository, roID, id string) {
 	t.Helper()
-	_, err := r.Stories().Create(t.Context(), newStory(id, roID, order))
-	must(t, "create story "+id, err)
+	_, err := r.Stories().Create(t.Context(), newStory(roID, id))
+	must(t, "create story "+roID+"/"+id, err)
 }
 
-func createItem(t *testing.T, r repository.Repository, id, storyID string, order int) {
+func createItem(t *testing.T, r repository.Repository, roID, storyID, id string) {
 	t.Helper()
-	_, err := r.Items().Create(t.Context(), newItem(id, storyID, order))
-	must(t, "create item "+id, err)
+	_, err := r.Items().Create(t.Context(), newItem(roID, storyID, id))
+	must(t, "create item "+roID+"/"+storyID+"/"+id, err)
 }
 
-func createObject(t *testing.T, r repository.Repository, id string) {
+func createObject(t *testing.T, r repository.Repository, mosID, id string) {
 	t.Helper()
-	_, err := r.Objects().Create(t.Context(), newObject(id))
-	must(t, "create object "+id, err)
+	_, err := r.Objects().Create(t.Context(), newObject(mosID, id))
+	must(t, "create object "+mosID+"/"+id, err)
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/xml"
@@ -30,7 +29,7 @@ func (s *MOSService) ProcessStoryAction(ctx context.Context, action xml.NCSReqSt
 // updateStory updates an existing story from the provided ROStorySend
 func (s *MOSService) updateStory(ctx context.Context, storySend xml.ROStorySend) error {
 	// Check if the story exists
-	story, err := s.storyRepo.Get(ctx, storySend.StoryID)
+	story, err := s.storyRepo.Get(ctx, storySend.ROID, storySend.StoryID)
 	if err != nil {
 		return fmt.Errorf("story not found: %w", err)
 	}
@@ -38,7 +37,6 @@ func (s *MOSService) updateStory(ctx context.Context, storySend xml.ROStorySend)
 	// Update story fields
 	story.Slug = storySend.StorySlug
 	story.Number = storySend.StoryNum
-	story.UpdatedAt = time.Now()
 
 	// Process story body
 	err = s.processStoryBody(ctx, story, &storySend.StoryBody)
@@ -69,7 +67,7 @@ func (s *MOSService) updateStory(ctx context.Context, storySend xml.ROStorySend)
 func (s *MOSService) replaceStory(ctx context.Context, storySend xml.ROStorySend) error {
 	// For now, implement as delete + create
 	// Delete existing story
-	err := s.storyRepo.Delete(ctx, storySend.StoryID)
+	err := s.storyRepo.Delete(ctx, storySend.ROID, storySend.StoryID)
 	if err != nil {
 		return fmt.Errorf("failed to delete existing story: %w", err)
 	}

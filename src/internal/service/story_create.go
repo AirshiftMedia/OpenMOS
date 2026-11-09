@@ -22,12 +22,9 @@ func (s *MOSService) createNewStory(ctx context.Context, storySend xml.ROStorySe
 		if err != nil {
 			// Create a new running order if it doesn't exist
 			ro = &model.RunningOrder{
-				ID:        storySend.ROID,
-				Slug:      "Auto-created RO",
-				Status:    model.StatusPending,
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-				Version:   1,
+				ID:     storySend.ROID,
+				Slug:   "Auto-created RO",
+				Status: model.StatusPending,
 			}
 
 			ro, err = s.runningOrderRepo.Create(ctx, ro)
@@ -52,19 +49,9 @@ func (s *MOSService) createNewStory(ctx context.Context, storySend xml.ROStorySe
 		Slug:           storySend.StorySlug,
 		Number:         storySend.StoryNum,
 		Status:         model.StatusPending,
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
 	}
 
-	// Try to determine the story's order in the running order
-	stories, err := s.storyRepo.ListByRunningOrder(ctx, ro.ID)
-	if err != nil {
-		return fmt.Errorf("failed to list stories: %w", err)
-	}
-
-	// New story goes at the end
-	story.Order = len(stories) + 1
-
+	// The repository appends the new story to the running order
 	// Process story body
 	err = s.processStoryBody(ctx, story, &storySend.StoryBody)
 	if err != nil {

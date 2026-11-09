@@ -9,10 +9,15 @@ var (
 	// refers to, does not exist.
 	ErrNotFound = errors.New("not found")
 
-	// ErrAlreadyExists means Create was called with an ID that is in use.
+	// ErrAlreadyExists means Create was called with a key that is in use.
 	ErrAlreadyExists = errors.New("already exists")
 
 	// ErrVersionConflict means an update was based on a stale version of a
 	// running order.
 	ErrVersionConflict = errors.New("version conflict")
+
+	// ErrInvalid means the request itself is malformed: an empty or too long
+	// ID, a value outside its MOS limits, or an ordering request that names
+	// the same record twice.
+	ErrInvalid = errors.New("invalid")
 )
