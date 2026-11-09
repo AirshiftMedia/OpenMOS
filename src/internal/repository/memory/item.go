@@ -15,8 +15,7 @@ func (s items) Create(_ context.Context, item *model.Item) (*model.Item, error) 
 	if err := checkItemKey(item.RunningOrderID, item.StoryID, item.ID); err != nil {
 		return nil, err
 	}
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	k := itemKey{item.RunningOrderID, item.StoryID, item.ID}
 	if _, ok := s.r.items[k]; ok {
 		return nil, fmt.Errorf("item %s/%s/%s: %w", k.ro, k.story, k.item, repository.ErrAlreadyExists)
@@ -39,8 +38,7 @@ func (s items) Get(_ context.Context, roID, storyID, itemID string) (*model.Item
 }
 
 func (s items) Update(_ context.Context, item *model.Item) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	k := itemKey{item.RunningOrderID, item.StoryID, item.ID}
 	current, ok := s.r.items[k]
 	if !ok {
@@ -54,8 +52,7 @@ func (s items) Update(_ context.Context, item *model.Item) error {
 }
 
 func (s items) Delete(_ context.Context, roID, storyID, itemID string) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	k := itemKey{roID, storyID, itemID}
 	if _, ok := s.r.items[k]; !ok {
 		return fmt.Errorf("item %s/%s/%s: %w", roID, storyID, itemID, repository.ErrNotFound)
@@ -71,8 +68,7 @@ func (s items) ListByStory(_ context.Context, roID, storyID string) ([]*model.It
 }
 
 func (s items) Move(_ context.Context, roID, storyID string, itemIDs []string, beforeID string) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	order, err := repository.MoveIDs(s.idsLocked(roID, storyID), itemIDs, beforeID)
 	if err != nil {
 		return fmt.Errorf("move items in %s/%s: %w", roID, storyID, err)
@@ -82,8 +78,7 @@ func (s items) Move(_ context.Context, roID, storyID string, itemIDs []string, b
 }
 
 func (s items) Swap(_ context.Context, roID, storyID, itemID1, itemID2 string) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	order, err := repository.SwapIDs(s.idsLocked(roID, storyID), itemID1, itemID2)
 	if err != nil {
 		return fmt.Errorf("swap items in %s/%s: %w", roID, storyID, err)
@@ -103,8 +98,7 @@ func (s items) ReplaceAll(_ context.Context, roID, storyID string, list []*model
 	if err := repository.CheckDistinct(ids); err != nil {
 		return fmt.Errorf("replace items in %s/%s: %w", roID, storyID, err)
 	}
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	if err := s.checkParentLocked(roID, storyID); err != nil {
 		return err
 	}

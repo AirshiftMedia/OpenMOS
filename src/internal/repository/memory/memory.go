@@ -24,6 +24,7 @@ type objectKey struct{ mos, obj string }
 // Repository holds all records behind one lock, so deletes can cascade
 // across record types atomically.
 type Repository struct {
+	writer        sync.Mutex // held by writes and for a whole InTx; taken before mu
 	mu            sync.RWMutex
 	runningOrders map[string]*model.RunningOrder
 	stories       map[storyKey]*model.Story

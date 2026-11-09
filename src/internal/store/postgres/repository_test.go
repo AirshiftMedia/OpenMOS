@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"testing"
@@ -10,6 +11,8 @@ import (
 	"airshift/openmos/internal/model"
 	"airshift/openmos/internal/repository"
 	"airshift/openmos/internal/repository/repotest"
+	"airshift/openmos/internal/service"
+	"airshift/openmos/internal/xml"
 )
 
 // TestContract runs the repository contract suite against the test
@@ -75,6 +78,31 @@ func TestConcurrentAppends(t *testing.T) {
 		want := map[string]int{"stories": n, "items": n - 1}[table]
 		if got := count(t, db, "SELECT max(position) FROM openmos."+table); got != want {
 			t.Errorf("last %s position %d, want %d", table, got, want)
+		}
+	}
+}
+
+// MOS-15: an roCreate that fails halfway, after the running order, its
+// stories and some items were written, must leave no rows behind.
+func TestHalfFailedROCreateLeavesNoRows(t *testing.T) {
+	db := migrated(t)
+	pool, err := pgxpool.New(t.Context(), testDatabaseURL(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(pool.Close)
+	svc := service.NewMOSService(New(pool), nil)
+
+	err = svc.ProcessRunningOrderInfo(t.Context(), xml.RunningOrderInfo{ID: "RO1", Stories: []xml.StoryInfo{
+		{ID: "S1", Items: []xml.ItemInfo{{ID: "I1"}}},
+		{ID: "S2", Items: []xml.ItemInfo{{ID: "I2", Duration: "1"}, {ID: "I2"}}}, // duplicate item
+	}})
+	if !errors.Is(err, repository.ErrInvalid) {
+		t.Fatalf("ProcessRunningOrderInfo err = %v, want %v", err, repository.ErrInvalid)
+	}
+	for _, table := range []string{"running_orders", "stories", "items"} {
+		if n := count(t, db, "SELECT count(*) FROM openmos."+table); n != 0 {
+			t.Errorf("%d rows left in %s, want 0", n, table)
 		}
 	}
 }

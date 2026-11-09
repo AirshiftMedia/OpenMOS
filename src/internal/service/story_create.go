@@ -2,38 +2,35 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
-	"airshift/openmos/internal/events"
 	"airshift/openmos/internal/model"
+	"airshift/openmos/internal/repository"
 	"airshift/openmos/internal/xml"
 	"airshift/openmos/pkg/logger"
 )
 
-// createNewStory creates a new story from the provided ROStorySend
-func (s *MOSService) createNewStory(ctx context.Context, storySend xml.ROStorySend) error {
-	// Check if Running Order exists, create if not
-	var ro *model.RunningOrder
-	var err error
-
-	if storySend.ROID != "" {
-		ro, err = s.runningOrderRepo.Get(ctx, storySend.ROID)
-		if err != nil {
-			// Create a new running order if it doesn't exist
-			ro = &model.RunningOrder{
-				ID:     storySend.ROID,
-				Slug:   "Auto-created RO",
-				Status: model.StatusPending,
-			}
-
-			ro, err = s.runningOrderRepo.Create(ctx, ro)
-			if err != nil {
-				return fmt.Errorf("failed to create running order: %w", err)
-			}
+// createNewStory creates a new story from the provided ROStorySend, creating
+// its running order if needed, and returns the story's ID.
+func (s *MOSService) createNewStory(ctx context.Context, tx repository.Repository, storySend xml.ROStorySend) (string, error) {
+	if storySend.ROID == "" {
+		return "", fmt.Errorf("no running order ID specified")
+	}
+	_, err := tx.RunningOrders().Get(ctx, storySend.ROID)
+	switch {
+	case errors.Is(err, repository.ErrNotFound):
+		ro := &model.RunningOrder{
+			ID:     storySend.ROID,
+			Slug:   "Auto-created RO",
+			Status: model.StatusPending,
 		}
-	} else {
-		return fmt.Errorf("no running order ID specified")
+		if _, err := tx.RunningOrders().Create(ctx, ro); err != nil {
+			return "", fmt.Errorf("failed to create running order: %w", err)
+		}
+	case err != nil:
+		return "", fmt.Errorf("failed to get running order: %w", err)
 	}
 
 	// Create a story ID if not provided
@@ -42,37 +39,23 @@ func (s *MOSService) createNewStory(ctx context.Context, storySend xml.ROStorySe
 		storyID = fmt.Sprintf("S%d", time.Now().UnixNano())
 	}
 
-	// Create the new story
 	story := &model.Story{
 		ID:             storyID,
-		RunningOrderID: ro.ID,
+		RunningOrderID: storySend.ROID,
 		Slug:           storySend.StorySlug,
 		Number:         storySend.StoryNum,
 		Status:         model.StatusPending,
 	}
 
+	if err := s.processStoryBody(ctx, story, &storySend.StoryBody); err != nil {
+		return "", fmt.Errorf("failed to process story body: %w", err)
+	}
+
 	// The repository appends the new story to the running order
-	// Process story body
-	err = s.processStoryBody(ctx, story, &storySend.StoryBody)
-	if err != nil {
-		return fmt.Errorf("failed to process story body: %w", err)
+	if _, err := tx.Stories().Create(ctx, story); err != nil {
+		return "", fmt.Errorf("failed to create story: %w", err)
 	}
 
-	// Create the story
-	_, err = s.storyRepo.Create(ctx, story)
-	if err != nil {
-		return fmt.Errorf("failed to create story: %w", err)
-	}
-
-	// Publish event after successful creation
-	if s.eventBus != nil {
-		s.eventBus.Publish(events.Event{
-			Type:    events.StoryModified,
-			Payload: story.ID,
-			Source:  "mos_service",
-		})
-	}
-
-	logger.Infof("Created new story %s in running order %s", story.ID, ro.ID)
-	return nil
+	logger.Infof("Created new story %s in running order %s", story.ID, storySend.ROID)
+	return story.ID, nil
 }

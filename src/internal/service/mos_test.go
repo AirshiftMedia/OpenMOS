@@ -12,7 +12,7 @@ import (
 
 func newTestService() (*MOSService, repository.Repository) {
 	repo := memory.New()
-	return NewMOSService(repo.RunningOrders(), repo.Stories(), repo.Items(), repo.Objects(), nil), repo
+	return NewMOSService(repo, nil), repo
 }
 
 func getRO(t *testing.T, repo repository.Repository, id string) *model.RunningOrder {

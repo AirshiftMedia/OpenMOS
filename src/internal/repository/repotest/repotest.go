@@ -46,6 +46,7 @@ func Run(t *testing.T, newRepo Factory) {
 		testObjects(t, newRepo)
 	})
 	t.Run("Cascade", func(t *testing.T) { testCascade(t, newRepo) })
+	t.Run("Tx", func(t *testing.T) { testTx(t, newRepo) })
 }
 
 // must stops the test if a setup step fails.

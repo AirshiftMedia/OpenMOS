@@ -14,8 +14,7 @@ func (s runningOrders) Create(_ context.Context, ro *model.RunningOrder) (*model
 	if err := repository.CheckID("running order", ro.ID); err != nil {
 		return nil, err
 	}
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	if _, ok := s.r.runningOrders[ro.ID]; ok {
 		return nil, fmt.Errorf("running order %s: %w", ro.ID, repository.ErrAlreadyExists)
 	}
@@ -36,8 +35,7 @@ func (s runningOrders) Get(_ context.Context, roID string) (*model.RunningOrder,
 }
 
 func (s runningOrders) Update(_ context.Context, ro *model.RunningOrder) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	current, ok := s.r.runningOrders[ro.ID]
 	if !ok {
 		return fmt.Errorf("running order %s: %w", ro.ID, repository.ErrNotFound)
@@ -54,8 +52,7 @@ func (s runningOrders) Update(_ context.Context, ro *model.RunningOrder) error {
 }
 
 func (s runningOrders) Delete(_ context.Context, roID string) error {
-	s.r.mu.Lock()
-	defer s.r.mu.Unlock()
+	defer s.r.lockWrite()()
 	if _, ok := s.r.runningOrders[roID]; !ok {
 		return fmt.Errorf("running order %s: %w", roID, repository.ErrNotFound)
 	}

@@ -52,8 +52,9 @@ Tables: `running_orders`, `stories`, `items`, `mos_objects`.
 - The PostgreSQL repositories use hand-written pgx queries. Operations that
   assign positions lock the parent row first, so concurrent appends and moves
   on one running order or story run one at a time.
-- Services run each MOS message in one transaction, and running order updates
-  use version-checked writes (optimistic locking).
+- Services run each MOS message in one transaction (`InTx`, MOS-15), and
+  running order updates use version-checked writes (optimistic locking).
+  Events go out only after the commit.
 - Configuration: the old `mongo` block is gone; a new `postgres` block, with
   `DATABASE_URL` or the standard `PG*` environment variables.
 - Startup can apply migrations automatically (`--migrate`) or only migrate and
